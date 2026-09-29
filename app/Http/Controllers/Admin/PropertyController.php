@@ -6,11 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Models\Feature;
 use App\Models\Property;
 use App\Models\User;
+use App\Services\MatchService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PropertyController extends Controller
 {
+    public function matches(Property $property, MatchService $matchService)
+    {
+        $this->authorize('view', $property);
+
+        $property->load('features');
+        $matches = $matchService->topMatchesForProperty($property, 10);
+
+        return view('admin.properties.matches', compact('property', 'matches'));
+    }
+
     public function index(Request $request)
     {
         $this->authorize('viewAny', Property::class);

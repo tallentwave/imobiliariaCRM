@@ -59,6 +59,34 @@ class DashboardController extends Controller
 
         $recentLeads = (clone $leadsQuery)->with(['property', 'agent', 'contact'])->latest()->take(8)->get();
 
-        return view('admin.dashboard', compact('stats', 'leadsByStage', 'upcomingVisits', 'recentLeads'));
+        $monthlySeries = $this->buildMonthlySeries($leadsQuery, $dealsQuery);
+
+        return view('admin.dashboard', compact('stats', 'leadsByStage', 'upcomingVisits', 'recentLeads', 'monthlySeries'));
+    }
+
+    private function buildMonthlySeries($leadsQuery, $dealsQuery): array
+    {
+        $months = 6;
+        $labels = [];
+        $leads = [];
+        $deals = [];
+
+        for ($i = $months - 1; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $labels[] = ucfirst($date->translatedFormat('M/y'));
+
+            $leads[] = (clone $leadsQuery)
+                ->whereYear('created_at', $date->year)
+                ->whereMonth('created_at', $date->month)
+                ->count();
+
+            $deals[] = (clone $dealsQuery)
+                ->where('status', 'CLOSED_WON')
+                ->whereYear('closed_at', $date->year)
+                ->whereMonth('closed_at', $date->month)
+                ->count();
+        }
+
+        return ['labels' => $labels, 'leads' => $leads, 'deals' => $deals];
     }
 }

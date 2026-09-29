@@ -49,18 +49,35 @@ CONTACT(owner) -> PROPERTY -> LISTING_AGREEMENT (captação)
 - Favoritar imóveis, salvar buscas (com alerta automático por e-mail de novos imóveis
   compatíveis) e acompanhar visitas/contatos enviados
 
+### PWA — instalável no celular
+- Site público e CRM são **Progressive Web Apps** independentes (manifests separados):
+  instale "Nova Imóveis" (cliente/site) ou "Nova Imóveis CRM" (equipe) na tela inicial do
+  celular como um app nativo, com ícone, splash screen e sem a barra de endereço do navegador
+- Botão **"Instalar app no celular"** no menu do CRM (aparece quando o navegador permite a
+  instalação) e suporte a "Adicionar à tela inicial" no Safari/iOS
+- Service worker com cache de assets estáticos e página de fallback offline — nunca armazena
+  em cache HTML dinâmico (evita tokens CSRF/sessão desatualizados)
+
 ### CRM / Painel administrativo (`/admin`)
 - **Dashboard** com indicadores por organização (imóveis ativos, leads no mês, SLA estourado,
-  negócios fechados, comissões do mês)
+  negócios fechados, comissões do mês) e gráficos de leads captados e negócios fechados nos
+  últimos 6 meses
 - **Contatos**: ficha 360° (leads, oportunidades, imóveis como proprietário, consentimentos,
   documentos, relacionamentos)
 - **Leads / Funil (Kanban com arrastar-e-soltar)**: pipeline `NEW → ATTEMPTING_CONTACT →
   CONTACTED → QUALIFYING → QUALIFIED → OPPORTUNITY`, com saídas `NURTURE/LOST/SPAM/
-  DUPLICATE/INVALID` (motivo de perda obrigatório), SLA com prazo de primeira resposta e
-  conversão explícita para Oportunidade
-- **Oportunidades**: buyer profile (orçamento, urgência, financiamento, FGTS), propostas em
-  thread versionado (aceitar / rejeitar / contrapropor) e criação de negócio a partir da
-  proposta aceita
+  DUPLICATE/INVALID` (motivo de perda obrigatório), conversão explícita para Oportunidade
+- **SLA automático com escalonamento**: distribuição de novos leads por carga (corretor com
+  menos leads nas últimas 24h) e, para leads sem primeira resposta, cascata automática de
+  lembrete (T+3/T+5 min) → escalonamento ao admin (T+10 min) → redistribuição para outro
+  corretor (T+15 min), tudo registrado em auditoria
+- **Oportunidades**: buyer profile (orçamento, urgência, financiamento, FGTS), critérios de
+  busca estruturados, propostas em thread versionado (aceitar / rejeitar / contrapropor) e
+  criação de negócio a partir da proposta aceita
+- **ALTIUS Match**: score ponderado (0–100%) entre oportunidade e imóvel — preço 25%,
+  localização 20%, tipologia 15%, dormitórios 10%, área 10%, vagas 5%, características 10%,
+  preferências 5% — explicável (mostra o motivo de cada pontuação) e com busca reversa
+  (a partir de um imóvel, veja quais compradores combinam com ele)
 - **Imóveis**: CRUD completo, upload de fotos, características, localização no mapa
 - **Captação**: contrato de captação (aberta/exclusiva/assinatura) com pipeline próprio
   (prospecção → ativa) e vínculo com o(s) proprietário(s) do imóvel
@@ -152,11 +169,14 @@ npm run dev   # ou: php artisan serve
    ```
 5. **Permissões**: garanta que as pastas `storage/` e `bootstrap/cache/` tenham permissão de
    escrita para o servidor web.
-6. **Agendador de tarefas (cron)**: para os alertas de buscas salvas funcionarem, configure na
-   Hostinger (hPanel → "Avançado" → "Cron Jobs") uma tarefa que rode a cada minuto:
+6. **Agendador de tarefas (cron)**: para os alertas de buscas salvas e o SLA automático de
+   leads funcionarem, configure na Hostinger (hPanel → "Avançado" → "Cron Jobs") uma tarefa
+   que rode a cada minuto:
    ```
    * * * * * php /caminho/do/projeto/artisan schedule:run >> /dev/null 2>&1
    ```
+   Isso dispara `app:process-lead-sla` (a cada minuto) e `app:notify-saved-searches`
+   (diariamente às 8h) automaticamente — não é preciso configurar cada comando separadamente.
 7. Acesse `/login` com o usuário admin criado pelo seeder e **troque a senha imediatamente**
    em "Meu perfil".
 
@@ -179,19 +199,24 @@ transacional e comercial** (o que a própria especificação chama de V1.0) e de
 ainda não foi construído:
 
 **Implementado nesta fase:**
-Identity/tenancy (Organization/Unit/Team), Contatos, Leads com SLA e pipeline completo,
-Oportunidades (buyer profile), Captação com proprietários, Propostas versionadas, Deal Room
-com checklist, Motor de comissões com splits, Auditoria de eventos sensíveis, LGPD básico
-(consentimento + fila de solicitações), Documentos, Visitas, Exportação para portais.
+Identity/tenancy (Organization/Unit/Team), Contatos, Leads com pipeline completo, SLA com
+escalonamento automático (T+3/T+5/T+10/T+15) e distribuição por carga entre corretores,
+Oportunidades (buyer profile), ALTIUS Match (score ponderado explicável, com busca reversa),
+Captação com proprietários, Propostas versionadas, Deal Room com checklist, Motor de
+comissões com splits, Auditoria de eventos sensíveis, LGPD básico (consentimento + fila de
+solicitações), Documentos, Visitas, Exportação para portais, Dashboard com gráficos, PWA
+instalável (site e CRM).
 
 **Não implementado (fora de escopo desta fase — corresponde a V1.5/V2/V3 no roadmap da
-especificação):**
-- ALTIUS Match (score ponderado comprador↔imóvel) e busca reversa
-- Motor de SLA com escalonamento automático (T+3/T+5/T+10/T+15) e distribuição automática de
-  leads (round-robin/especialidade/região) — hoje a atribuição é manual ou aleatória simples
+especificação, ou depende de serviços externos que exigem credenciais próprias):**
+- Assinatura eletrônica de contratos (ex.: D4Sign/Clicksign) — requer conta/API key do provedor
+- WhatsApp Business API oficial (histórico de conversas dentro do CRM) — hoje só há botão de
+  link direto (`wa.me`); a API oficial exige conta Meta Business aprovada
+- Distribuição de leads por especialidade/região (hoje é só por carga/round-robin simples)
 - Compliance/PLD-FT (KYC, risk flags, casos confidenciais)
 - Owner Portal dedicado, ALTIUS Academy (cursos/certificações), Score e carreira
-- BI avançado, mapa de inteligência de mercado, ALTIUS AI
+- BI avançado (funil de conversão, CAC/ROAS por campanha), mapa de inteligência de mercado,
+  ALTIUS AI
 - API pública com OpenAPI/Swagger, webhooks e automações configuráveis (WHEN/IF/THEN)
 - Permissões de campo (ex.: mascarar CPF) e de ação (ex.: exportação negada mesmo com leitura)
 - Multiunidade operacional completa (o schema já suporta, mas hoje há uma única organização/
@@ -209,6 +234,10 @@ especificação):**
 - `visits`, `favorites`, `saved_searches`, `documents`, `settings`
 - `audit_logs`, `consents`, `privacy_requests`
 - `users` + tabelas do Spatie Permission
+
+Arquivos do PWA: `public/manifest.webmanifest` (site), `public/admin-manifest.webmanifest`
+(CRM), `public/sw.js` (service worker), `public/offline.html` (fallback offline),
+`public/icons/` (ícones gerados).
 
 ## Comandos úteis
 

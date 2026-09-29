@@ -1,7 +1,10 @@
 <x-admin-layout title="Editar imóvel">
     <div class="flex items-center justify-between mb-6">
         <h1 class="text-2xl font-bold text-slate-900">Editar imóvel</h1>
-        <a href="{{ route('imoveis.show', $property) }}" target="_blank" class="text-sm text-brand-700 font-semibold">Ver no site ↗</a>
+        <div class="flex items-center gap-4">
+            <a href="{{ route('admin.properties.matches', $property) }}" class="text-sm text-brand-700 font-semibold">Ver Match (compradores) →</a>
+            <a href="{{ route('imoveis.show', $property) }}" target="_blank" class="text-sm text-brand-700 font-semibold">Ver no site ↗</a>
+        </div>
     </div>
 
     <form action="{{ route('admin.properties.update', $property) }}" method="POST" enctype="multipart/form-data">

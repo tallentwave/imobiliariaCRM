@@ -28,7 +28,16 @@
         </div>
     </div>
 
-    <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-2xl border border-slate-100 p-5">
+            <x-admin.bar-chart title="Leads captados (últimos 6 meses)" :labels="$monthlySeries['labels']" :values="$monthlySeries['leads']" color="#2a78d6" />
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-100 p-5">
+            <x-admin.bar-chart title="Negócios fechados (últimos 6 meses)" :labels="$monthlySeries['labels']" :values="$monthlySeries['deals']" color="#eb6834" />
+        </div>
+    </div>
+
+    <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-100 p-5">
             <h2 class="font-semibold text-slate-800 mb-4">Funil de leads</h2>
             <div class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-11 gap-2">

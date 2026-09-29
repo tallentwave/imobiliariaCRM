@@ -20,6 +20,8 @@ class Lead extends Model
         'next_activity_at' => 'datetime',
         'sla_due_at' => 'datetime',
         'escalated_at' => 'datetime',
+        'redistributed_at' => 'datetime',
+        'sla_milestones_notified' => 'array',
     ];
 
     public const STAGES = [

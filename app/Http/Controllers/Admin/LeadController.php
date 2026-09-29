@@ -67,9 +67,23 @@ class LeadController extends Controller
             'status' => 'OPEN',
         ]);
 
+        // Pré-preenche os critérios de match a partir do imóvel que originou o lead,
+        // para o ALTIUS Match já ter dados úteis desde a criação da oportunidade.
+        if ($property = $lead->property) {
+            $requirements = array_filter([
+                $property->city ? ['feature_key' => 'city', 'feature_value' => $property->city, 'priority' => 'DESEJAVEL'] : null,
+                $property->neighborhood ? ['feature_key' => 'neighborhood', 'feature_value' => $property->neighborhood, 'priority' => 'DESEJAVEL'] : null,
+                ['feature_key' => 'type', 'feature_value' => $property->type, 'priority' => 'DESEJAVEL'],
+                $property->bedrooms ? ['feature_key' => 'bedrooms', 'feature_value' => (string) $property->bedrooms, 'priority' => 'DESEJAVEL'] : null,
+                $property->parking_spots ? ['feature_key' => 'parking_spots', 'feature_value' => (string) $property->parking_spots, 'priority' => 'DESEJAVEL'] : null,
+            ]);
+
+            $opportunity->requirements()->createMany($requirements);
+        }
+
         $lead->update(['stage' => 'OPPORTUNITY', 'last_activity_at' => now()]);
 
-        return redirect()->route('admin.opportunities.show', $opportunity)->with('success', 'Oportunidade criada a partir do lead.');
+        return redirect()->route('admin.opportunities.show', $opportunity)->with('success', 'Oportunidade criada a partir do lead, com critérios de match pré-preenchidos.');
     }
 
     public function destroy(Lead $lead)

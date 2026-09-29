@@ -9,6 +9,15 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet">
 
+    <link rel="manifest" href="/admin-manifest.webmanifest">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <link rel="icon" href="/icons/icon-192.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Nova Imóveis CRM">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
     @livewireStyles
@@ -104,6 +113,24 @@
                 @endif
 
                 <div class="pt-4 mt-4 border-t border-slate-800">
+                    <div
+                        x-data="{ show: false }"
+                        x-init="
+                            window.addEventListener('pwa-install-available', () => show = true);
+                            window.addEventListener('pwa-installed', () => show = false);
+                            if (window.matchMedia('(display-mode: standalone)').matches) show = false;
+                        "
+                        x-show="show"
+                        x-cloak
+                    >
+                        <button
+                            @click="window.deferredPwaPrompt && window.deferredPwaPrompt.prompt(); show = false"
+                            class="w-full flex items-center gap-3 rounded-lg px-3 py-2 bg-accent-500 text-slate-900 font-semibold hover:bg-accent-400"
+                        >
+                            📲 Instalar app no celular
+                        </button>
+                    </div>
+
                     <a href="{{ route('home') }}" target="_blank" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-slate-800/60">
                         Ver site público ↗
                     </a>

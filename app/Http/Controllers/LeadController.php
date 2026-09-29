@@ -8,11 +8,14 @@ use App\Models\Organization;
 use App\Models\Property;
 use App\Models\User;
 use App\Notifications\NewLeadReceived;
+use App\Services\LeadAssignmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Notification;
 
 class LeadController extends Controller
 {
+    public function __construct(private LeadAssignmentService $assignmentService) {}
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -26,11 +29,7 @@ class LeadController extends Controller
 
         $property = isset($data['property_id']) ? Property::find($data['property_id']) : null;
 
-        $agentId = $property?->agent_id;
-
-        if (! $agentId) {
-            $agentId = User::role('corretor')->where('active', true)->inRandomOrder()->value('id');
-        }
+        $agentId = $this->assignmentService->pickAgent($property)?->id;
 
         $organization = Organization::first();
 

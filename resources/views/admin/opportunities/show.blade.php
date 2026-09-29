@@ -22,6 +22,83 @@
             </div>
 
             <div class="bg-white rounded-2xl border border-slate-100 p-6">
+                <h2 class="font-semibold text-slate-800 mb-4">Critérios de busca (para o Match)</h2>
+
+                <div class="flex flex-wrap gap-2">
+                    @forelse($opportunity->requirements as $requirement)
+                        <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 text-slate-700 text-xs px-3 py-1.5">
+                            {{ ['city' => 'Cidade', 'neighborhood' => 'Bairro', 'type' => 'Tipo', 'bedrooms' => 'Dormitórios', 'area_min' => 'Área mín.', 'parking_spots' => 'Vagas', 'feature' => 'Característica'][$requirement->feature_key] ?? $requirement->feature_key }}:
+                            <strong>{{ $requirement->feature_value }}</strong>
+                            <form action="{{ route('admin.opportunities.requirements.destroy', [$opportunity, $requirement]) }}" method="POST" class="inline">
+                                @csrf @method('DELETE')
+                                <button class="text-slate-400 hover:text-red-500">✕</button>
+                            </form>
+                        </span>
+                    @empty
+                        <p class="text-sm text-slate-400">Nenhum critério definido ainda — o Match usará apenas orçamento e finalidade.</p>
+                    @endforelse
+                </div>
+
+                <details class="mt-4">
+                    <summary class="text-sm font-semibold text-brand-700 cursor-pointer">+ Adicionar critério</summary>
+                    <form action="{{ route('admin.opportunities.requirements.store', $opportunity) }}" method="POST" class="mt-3 flex flex-wrap items-end gap-2 bg-slate-50 rounded-xl p-4">
+                        @csrf
+                        <div>
+                            <label class="text-xs font-semibold text-slate-500">Critério</label>
+                            <select name="feature_key" class="mt-1 rounded-lg border-slate-200 text-sm">
+                                <option value="city">Cidade</option>
+                                <option value="neighborhood">Bairro</option>
+                                <option value="type">Tipo de imóvel</option>
+                                <option value="bedrooms">Dormitórios (mín.)</option>
+                                <option value="area_min">Área mín. (m²)</option>
+                                <option value="parking_spots">Vagas (mín.)</option>
+                                <option value="feature">Característica</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-500">Valor</label>
+                            <input type="text" name="feature_value" required class="mt-1 rounded-lg border-slate-200 text-sm">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-500">Prioridade</label>
+                            <select name="priority" class="mt-1 rounded-lg border-slate-200 text-sm">
+                                <option value="OBRIGATORIO">Obrigatório</option>
+                                <option value="DESEJAVEL" selected>Desejável</option>
+                                <option value="INDIFERENTE">Indiferente</option>
+                                <option value="EXCLUDENTE">Excludente</option>
+                            </select>
+                        </div>
+                        <button class="rounded-lg bg-brand-700 text-white text-sm font-semibold px-4 py-2 hover:bg-brand-800">Adicionar</button>
+                    </form>
+                </details>
+            </div>
+
+            @if($matches->isNotEmpty())
+                <div class="bg-white rounded-2xl border border-slate-100 p-6">
+                    <h2 class="font-semibold text-slate-800 mb-1">ALTIUS Match — imóveis sugeridos</h2>
+                    <p class="text-xs text-slate-400 mb-4">Ranqueado por preço, localização, tipologia, dormitórios, área, vagas e características.</p>
+                    <div class="space-y-4">
+                        @foreach($matches as $item)
+                            <div class="flex items-center gap-4 rounded-xl border border-slate-100 p-3">
+                                <a href="{{ route('imoveis.show', $item['property']) }}" target="_blank" class="shrink-0 h-14 w-14 rounded-lg bg-slate-100 overflow-hidden">
+                                    @if($cover = $item['property']->images->first())
+                                        <img src="{{ $cover->url() }}" class="h-full w-full object-cover" alt="">
+                                    @endif
+                                </a>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-slate-800 truncate">{{ $item['property']->title }}</p>
+                                    <p class="text-xs text-slate-400">{{ $item['property']->neighborhood }}, {{ $item['property']->city }} · R$ {{ number_format($item['property']->price ?? 0, 0, ',', '.') }}</p>
+                                </div>
+                                <div class="w-40 shrink-0">
+                                    <x-admin.match-score :score="$item['score']" :breakdown="$item['breakdown']" />
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            <div class="bg-white rounded-2xl border border-slate-100 p-6">
                 <h2 class="font-semibold text-slate-800 mb-4">Propostas</h2>
 
                 @forelse($opportunity->proposals->whereNull('parent_proposal_id') as $proposal)

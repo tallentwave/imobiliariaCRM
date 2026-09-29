@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('app:notify-saved-searches')->dailyAt('08:00');
+Schedule::command('app:process-lead-sla')->everyMinute()->withoutOverlapping();

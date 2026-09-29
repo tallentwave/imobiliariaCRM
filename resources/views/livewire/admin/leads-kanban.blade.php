@@ -51,7 +51,12 @@
                             class="bg-white rounded-xl border border-slate-100 p-3 shadow-sm cursor-move hover:shadow-md transition"
                         >
                             <a href="{{ route('admin.leads.show', $lead) }}" class="block" onclick="event.stopPropagation()">
-                                <p class="text-sm font-semibold text-slate-800">{{ $lead->name }}</p>
+                                <div class="flex items-center justify-between gap-1">
+                                    <p class="text-sm font-semibold text-slate-800">{{ $lead->name }}</p>
+                                    @if($lead->isSlaOverdue())
+                                        <span class="shrink-0 h-2 w-2 rounded-full bg-red-500" title="SLA estourado"></span>
+                                    @endif
+                                </div>
                                 <p class="text-xs text-slate-500 mt-0.5">{{ $lead->property->title ?? 'Contato geral' }}</p>
                                 <p class="text-xs text-slate-400 mt-0.5">{{ $lead->phone }}</p>
                             </a>

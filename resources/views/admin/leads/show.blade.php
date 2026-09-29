@@ -18,6 +18,12 @@
                         @if($lead->isSlaOverdue())
                             <p class="text-xs font-semibold text-red-600 mt-1">SLA estourado</p>
                         @endif
+                        @if($lead->escalated_at)
+                            <p class="text-xs font-semibold text-amber-600 mt-1">Escalonado em {{ $lead->escalated_at->format('d/m H:i') }}</p>
+                        @endif
+                        @if($lead->redistributed_at)
+                            <p class="text-xs font-semibold text-purple-600 mt-1">Redistribuído automaticamente</p>
+                        @endif
                     </div>
                 </div>
 

@@ -87,6 +87,7 @@ Route::middleware(['auth', 'role:admin|corretor|financeiro|captador|compliance']
 
         // Imóveis
         Route::resource('properties', AdminPropertyController::class)->except(['show']);
+        Route::get('properties/{property}/matches', [AdminPropertyController::class, 'matches'])->name('properties.matches');
         Route::delete('property-images/{image}', [AdminPropertyImageController::class, 'destroy'])->name('property-images.destroy');
         Route::post('property-images/{image}/cover', [AdminPropertyImageController::class, 'setCover'])->name('property-images.cover');
 
@@ -104,6 +105,8 @@ Route::middleware(['auth', 'role:admin|corretor|financeiro|captador|compliance']
         Route::get('opportunities', [AdminOpportunityController::class, 'index'])->name('opportunities.index');
         Route::get('opportunities/{opportunity}', [AdminOpportunityController::class, 'show'])->name('opportunities.show');
         Route::put('opportunities/{opportunity}', [AdminOpportunityController::class, 'update'])->name('opportunities.update');
+        Route::post('opportunities/{opportunity}/requirements', [AdminOpportunityController::class, 'storeRequirement'])->name('opportunities.requirements.store');
+        Route::delete('opportunities/{opportunity}/requirements/{requirement}', [AdminOpportunityController::class, 'destroyRequirement'])->name('opportunities.requirements.destroy');
 
         Route::post('opportunities/{opportunity}/proposals', [AdminProposalController::class, 'store'])->name('proposals.store');
         Route::post('proposals/{proposal}/counter', [AdminProposalController::class, 'counter'])->name('proposals.counter');
