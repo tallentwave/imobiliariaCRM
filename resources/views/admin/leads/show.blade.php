@@ -48,6 +48,39 @@
                     + Agendar visita
                 </a>
             </div>
+
+            <div class="bg-white rounded-2xl border border-slate-100 p-6">
+                <h2 class="font-semibold text-slate-800 mb-4">Documentos e contratos</h2>
+
+                @forelse($lead->documents as $document)
+                    <div class="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
+                        <div>
+                            <a href="{{ route('admin.documents.download', $document) }}" class="text-sm font-medium text-brand-700 hover:text-brand-800">
+                                {{ $document->name }}
+                            </a>
+                            <p class="text-xs text-slate-400">
+                                {{ $document->sizeForHumans() }} · enviado por {{ $document->uploadedBy->name ?? '—' }}
+                                em {{ $document->created_at->format('d/m/Y') }}
+                            </p>
+                        </div>
+                        <form action="{{ route('admin.documents.destroy', $document) }}" method="POST" onsubmit="return confirm('Remover este documento?')">
+                            @csrf @method('DELETE')
+                            <button class="text-xs text-red-500 hover:text-red-700">Excluir</button>
+                        </form>
+                    </div>
+                @empty
+                    <p class="text-sm text-slate-400">Nenhum documento anexado.</p>
+                @endforelse
+
+                <form action="{{ route('admin.leads.documents.store', $lead) }}" method="POST" enctype="multipart/form-data" class="mt-4 flex items-center gap-3">
+                    @csrf
+                    <input type="file" name="file" required accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" class="text-xs flex-1">
+                    <button type="submit" class="rounded-lg bg-slate-800 text-white text-xs font-semibold px-3 py-2 hover:bg-slate-900 whitespace-nowrap">
+                        Enviar
+                    </button>
+                </form>
+                <p class="text-[11px] text-slate-400 mt-1">PDF, Word ou imagem, até 10 MB.</p>
+            </div>
         </div>
 
         <div class="space-y-6">

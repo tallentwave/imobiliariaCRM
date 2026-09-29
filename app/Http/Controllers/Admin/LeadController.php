@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Lead;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class LeadController extends Controller
 {
@@ -14,20 +13,7 @@ class LeadController extends Controller
     {
         $this->authorize('viewAny', Lead::class);
 
-        $user = Auth::user();
-
-        $leads = Lead::query()
-            ->when(! $user->hasRole('admin') && ! $user->hasRole('financeiro'), fn ($q) => $q->where('agent_id', $user->id))
-            ->with(['property', 'agent'])
-            ->orderBy('stage')
-            ->latest()
-            ->get()
-            ->groupBy('stage');
-
-        $stages = Lead::STAGES;
-        $agents = User::role('corretor')->get();
-
-        return view('admin.leads.index', compact('leads', 'stages', 'agents'));
+        return view('admin.leads.index');
     }
 
     public function show(Lead $lead)

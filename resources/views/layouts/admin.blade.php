@@ -11,6 +11,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
+    @livewireStyles
 </head>
 <body class="font-sans antialiased bg-slate-50 text-slate-800" x-data="{ sidebarOpen: false }">
 
@@ -39,7 +40,16 @@
                     Visitas
                 </a>
 
+                @if($user->hasRole('admin') || $user->hasRole('financeiro'))
+                    <a href="{{ route('admin.reports.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.reports.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
+                        Relatórios
+                    </a>
+                @endif
+
                 @if($user->hasRole('admin'))
+                    <a href="{{ route('admin.export.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.export.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
+                        Exportar p/ portais
+                    </a>
                     <a href="{{ route('admin.features.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.features.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
                         Características
                     </a>
@@ -109,5 +119,6 @@
     </div>
 
     @stack('scripts')
+    @livewireScripts
 </body>
 </html>

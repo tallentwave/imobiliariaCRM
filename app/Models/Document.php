@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Support\Facades\Storage;
 
 class Document extends Model
 {
@@ -21,8 +20,21 @@ class Document extends Model
         return $this->belongsTo(User::class, 'uploaded_by');
     }
 
-    public function url(): string
+    public function downloadUrl(): string
     {
-        return Storage::disk('local')->url($this->path);
+        return route('admin.documents.download', $this);
+    }
+
+    public function sizeForHumans(): string
+    {
+        $bytes = \Illuminate\Support\Facades\Storage::disk('local')->exists($this->path)
+            ? \Illuminate\Support\Facades\Storage::disk('local')->size($this->path)
+            : 0;
+
+        return match (true) {
+            $bytes >= 1048576 => round($bytes / 1048576, 1).' MB',
+            $bytes >= 1024 => round($bytes / 1024, 1).' KB',
+            default => $bytes.' B',
+        };
     }
 }

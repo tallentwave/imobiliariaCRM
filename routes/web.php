@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
+use App\Http\Controllers\Admin\ExportController as AdminExportController;
 use App\Http\Controllers\Admin\FeatureController as AdminFeatureController;
 use App\Http\Controllers\Admin\LeadController as AdminLeadController;
 use App\Http\Controllers\Admin\PropertyController as AdminPropertyController;
 use App\Http\Controllers\Admin\PropertyImageController as AdminPropertyImageController;
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\VisitController as AdminVisitController;
@@ -74,8 +77,19 @@ Route::middleware(['auth', 'role:admin|corretor|financeiro'])
         Route::post('property-images/{image}/cover', [AdminPropertyImageController::class, 'setCover'])->name('property-images.cover');
 
         Route::resource('leads', AdminLeadController::class)->only(['index', 'show', 'update', 'destroy']);
+        Route::post('leads/{lead}/documents', [AdminDocumentController::class, 'storeForLead'])->name('leads.documents.store');
+        Route::get('documents/{document}/download', [AdminDocumentController::class, 'download'])->name('documents.download');
+        Route::delete('documents/{document}', [AdminDocumentController::class, 'destroy'])->name('documents.destroy');
 
         Route::resource('visits', AdminVisitController::class)->except(['show']);
+
+        Route::get('relatorios', [AdminReportController::class, 'index'])->name('reports.index');
+        Route::get('relatorios/export', [AdminReportController::class, 'export'])->name('reports.export');
+        Route::post('relatorios/leads/{lead}/pagar', [AdminReportController::class, 'markPaid'])->name('reports.mark-paid');
+
+        Route::get('exportar', [AdminExportController::class, 'index'])->name('export.index');
+        Route::get('exportar/zap-vivareal.xml', [AdminExportController::class, 'zapVivaReal'])->name('export.zap-vivareal');
+        Route::get('exportar/olx.xml', [AdminExportController::class, 'olx'])->name('export.olx');
 
         Route::get('features', [AdminFeatureController::class, 'index'])->name('features.index');
         Route::post('features', [AdminFeatureController::class, 'store'])->name('features.store');

@@ -24,11 +24,19 @@ Construído com **Laravel 11 (PHP)**, **MySQL** (SQLite em desenvolvimento), **T
 ### CRM / Painel administrativo (`/admin`)
 - **Dashboard** com indicadores (imóveis ativos, leads no mês, negócios fechados, comissões)
 - **Imóveis**: CRUD completo, upload de múltiplas fotos, características, localização no mapa
-- **Funil de vendas (Kanban)**: leads organizados por etapa (novo → em contato → visita →
-  proposta → fechado ganho/perdido)
+- **Funil de vendas (Kanban com arrastar-e-soltar)**: leads organizados por etapa (novo → em
+  contato → visita → proposta → fechado ganho/perdido), construído com Livewire + Sortable.js
+- **Documentos e contratos**: upload/download/exclusão de arquivos (PDF, Word, imagens)
+  vinculados a cada lead/negócio, com armazenamento privado
 - **Visitas**: agenda de visitas vinculadas a imóveis, leads e corretores
 - **Usuários**: gestão de administradores, corretores e financeiro, com papéis e permissões
-- **Comissões**: valor negociado e percentual de comissão calculados automaticamente por lead
+- **Comissões e relatórios financeiros**: valor negociado e comissão calculados
+  automaticamente por lead, relatório por corretor/período com exportação em CSV e
+  marcação de comissão paga/pendente
+- **Exportação para portais**: feeds XML dinâmicos (padrão ZAP/VivaReal e um formato
+  simplificado compatível com OLX/integradores) para publicação automática dos imóveis
+- **Alertas automáticos por e-mail**: clientes que salvarem uma busca recebem e-mail quando
+  novos imóveis publicados combinarem com os filtros salvos (via agendador do Laravel)
 - **Configurações**: nome, logo, cores, WhatsApp, redes sociais, endereço
 
 ### Papéis de acesso (Spatie Permission)
@@ -98,7 +106,13 @@ npm run dev   # ou: php artisan serve
    ```
 5. **Permissões**: garanta que as pastas `storage/` e `bootstrap/cache/` tenham permissão de
    escrita para o servidor web.
-6. Acesse `/login` com o usuário admin criado pelo seeder e **troque a senha imediatamente**
+6. **Agendador de tarefas (cron)**: para os alertas automáticos de buscas salvas funcionarem,
+   configure na Hostinger (hPanel → "Avançado" → "Cron Jobs") uma tarefa que rode a cada
+   minuto:
+   ```
+   * * * * * php /caminho/do/projeto/artisan schedule:run >> /dev/null 2>&1
+   ```
+7. Acesse `/login` com o usuário admin criado pelo seeder e **troque a senha imediatamente**
    em "Meu perfil".
 
 ## Estrutura de dados (principais tabelas)
@@ -109,19 +123,31 @@ npm run dev   # ou: php artisan serve
 - `leads` — contatos recebidos, com etapa do funil, valor negociado e comissão
 - `visits` — agenda de visitas
 - `favorites` / `saved_searches` — dados da área do cliente
+- `documents` — arquivos/contratos vinculados a leads (armazenamento privado)
 - `settings` — configurações gerais do site (nome, logo, contatos, redes sociais)
 - `users` + tabelas do Spatie Permission — usuários, papéis e permissões
 
+## Exportação para portais imobiliários
+
+Em **Admin → Exportar p/ portais** ficam disponíveis dois feeds XML gerados dinamicamente a
+partir dos imóveis com status "Disponível"/"Reservado":
+
+- `/admin/exportar/zap-vivareal.xml` — estrutura no padrão ZAP/VivaReal (`ListingDataFeed`)
+- `/admin/exportar/olx.xml` — formato simplificado compatível com integradores de anúncios
+
+⚠️ Os portais podem alterar a especificação exigida sem aviso prévio — **confirme os nomes
+exatos de campo com o suporte técnico do portal** antes de ativar o envio automático em
+produção.
+
 ## Roadmap sugerido (próximas etapas)
 
-Este é um sistema completo e funcional (fase 1). Para evoluir ainda mais, considere:
+Este sistema já cobre um CRM completo e funcional. Para evoluir ainda mais, considere:
 
-- [ ] Exportação de feed XML para portais (Zap Imóveis, OLX, VivaReal)
-- [ ] Kanban com arrastar-e-soltar (Livewire, já incluso no projeto) em vez de seleção manual
-- [ ] Upload e assinatura de documentos/contratos por negócio
-- [ ] Envio automático de e-mail para buscas salvas quando novos imóveis correspondem aos filtros
-- [ ] Relatórios financeiros mais detalhados (comissões por corretor, por período)
+- [ ] Assinatura eletrônica de contratos (ex.: integração com D4Sign/Clicksign)
 - [ ] Integração com WhatsApp Business API para histórico de conversas dentro do CRM
+- [ ] Envio automático dos feeds XML diretamente para a API de cada portal (hoje a URL do
+      feed precisa ser cadastrada manualmente no painel do portal)
+- [ ] Gráficos no dashboard (evolução de leads e vendas ao longo do tempo)
 - [ ] App mobile ou PWA para corretores em campo
 
 ## Comandos úteis
