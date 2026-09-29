@@ -145,6 +145,17 @@ npm run dev   # ou: php artisan serve
 
 ## Deploy na Hostinger
 
+0. **Pré-requisitos no hPanel** (antes de qualquer coisa):
+   - **Versão do PHP**: em "Avançado" → "Configuração do PHP", selecione **PHP 8.2 ou superior**
+     (planos Hostinger costumam vir com uma versão antiga por padrão — o Laravel 11 não sobe com
+     PHP < 8.2).
+   - **Acesso SSH**: em "Avançado" → "Acesso SSH", ative o acesso e anote host/porta/usuário.
+     Sem SSH você consegue rodar `composer install` e `php artisan` pelo terminal do hPanel em
+     alguns planos, mas SSH é mais confiável para os comandos abaixo.
+   - **Node.js**: o build do front-end (`npm run build`) normalmente precisa ser feito **fora**
+     do servidor (ambiente local ou CI), pois hospedagem compartilhada raramente tem Node.js
+     disponível — depois é só enviar a pasta `public/build` já gerada junto com o restante dos
+     arquivos.
 1. **Banco de dados MySQL**: no hPanel, crie um banco de dados MySQL e um usuário. Anote
    nome do banco, usuário, senha e host (geralmente `localhost`).
 2. **Enviar os arquivos**: envie todo o projeto para o servidor (via Git, FTP ou o Gerenciador
@@ -158,7 +169,7 @@ npm run dev   # ou: php artisan serve
 4. **Instalar dependências e preparar a aplicação** (via SSH ou terminal do hPanel):
    ```bash
    composer install --optimize-autoloader --no-dev
-   npm install && npm run build
+   npm install && npm run build   # pule esta linha se já enviou a pasta public/build pronta (item 0)
    php artisan key:generate
    php artisan migrate --force
    php artisan db:seed --force   # opcional: cria organização, unidade e usuário admin inicial
@@ -167,6 +178,9 @@ npm run dev   # ou: php artisan serve
    php artisan route:cache
    php artisan view:cache
    ```
+   Se o comando `composer` do servidor apontar para uma versão antiga do PHP, use
+   `php8.2 /usr/local/bin/composer install ...` (ou o binário indicado pelo suporte da Hostinger
+   para a versão do PHP escolhida no item 0).
 5. **Permissões**: garanta que as pastas `storage/` e `bootstrap/cache/` tenham permissão de
    escrita para o servidor web.
 6. **Agendador de tarefas (cron)**: para os alertas de buscas salvas e o SLA automático de
