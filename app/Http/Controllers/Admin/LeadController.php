@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lead;
+use App\Models\Opportunity;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -20,7 +21,7 @@ class LeadController extends Controller
     {
         $this->authorize('view', $lead);
 
-        $lead->load(['property', 'agent', 'visits', 'documents']);
+        $lead->load(['contact', 'property', 'agent', 'assignedTeam', 'visits', 'documents', 'opportunities']);
         $agents = User::role('corretor')->get();
 
         return view('admin.leads.show', compact('lead', 'agents'));
@@ -33,10 +34,15 @@ class LeadController extends Controller
         $data = $request->validate([
             'stage' => ['required', 'in:'.implode(',', array_keys(Lead::STAGES))],
             'agent_id' => ['nullable', 'exists:users,id'],
-            'negotiated_value' => ['nullable', 'numeric', 'min:0'],
-            'commission_percent' => ['nullable', 'numeric', 'min:0', 'max:100'],
-            'lost_reason' => ['nullable', 'string', 'max:255'],
+            'temperature' => ['nullable', 'in:COLD,WARM,HOT'],
+            'lost_reason' => ['required_if:stage,LOST,SPAM,DUPLICATE,INVALID', 'nullable', 'string', 'max:255'],
         ]);
+
+        if (! $lead->first_response_at) {
+            $data['first_response_at'] = now();
+        }
+
+        $data['last_activity_at'] = now();
 
         $lead->update($data);
 
@@ -45,6 +51,25 @@ class LeadController extends Controller
         }
 
         return back()->with('success', 'Lead atualizado.');
+    }
+
+    public function convertToOpportunity(Lead $lead)
+    {
+        $this->authorize('update', $lead);
+
+        $opportunity = Opportunity::create([
+            'organization_id' => $lead->organization_id,
+            'unit_id' => $lead->unit_id,
+            'contact_id' => $lead->contact_id,
+            'lead_id' => $lead->id,
+            'assigned_user_id' => $lead->agent_id,
+            'purpose' => 'MORAR',
+            'status' => 'OPEN',
+        ]);
+
+        $lead->update(['stage' => 'OPPORTUNITY', 'last_activity_at' => now()]);
+
+        return redirect()->route('admin.opportunities.show', $opportunity)->with('success', 'Oportunidade criada a partir do lead.');
     }
 
     public function destroy(Lead $lead)

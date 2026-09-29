@@ -43,9 +43,12 @@ class LeadsKanban extends Component
 
         $this->authorize('update', $lead);
 
-        $lead->update(['stage' => $stage]);
-
-        $this->dispatch('notify', message: 'Lead movido para "'.Lead::STAGES[$stage].'".');
+        try {
+            $lead->update(['stage' => $stage]);
+            $this->dispatch('notify', message: 'Lead movido para "'.Lead::STAGES[$stage].'".');
+        } catch (\InvalidArgumentException) {
+            $this->dispatch('notify', message: 'Para mover para "'.Lead::STAGES[$stage].'" é preciso informar o motivo — abra o lead para registrar.');
+        }
     }
 
     public function render()

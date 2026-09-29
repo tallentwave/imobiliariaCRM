@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\AuditLogger;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -44,6 +45,18 @@ class Property extends Model
                 $property->published_at = now();
             }
         });
+
+        static::updating(function (Property $property) {
+            if ($property->isDirty('price')) {
+                AuditLogger::log(
+                    'property.price_changed',
+                    $property,
+                    'price',
+                    $property->getOriginal('price'),
+                    $property->price,
+                );
+            }
+        });
     }
 
     public static function uniqueSlug(string $title): string
@@ -60,9 +73,46 @@ class Property extends Model
         return $slug;
     }
 
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
+    }
+
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
     public function agent(): BelongsTo
     {
         return $this->belongsTo(User::class, 'agent_id');
+    }
+
+    public function owners(): BelongsToMany
+    {
+        return $this->belongsToMany(Contact::class, 'property_owners')
+            ->withPivot(['ownership_percentage', 'primary_contact', 'authorization_status'])
+            ->withTimestamps();
+    }
+
+    public function listingAgreements(): HasMany
+    {
+        return $this->hasMany(ListingAgreement::class);
+    }
+
+    public function activeListingAgreement(): ?ListingAgreement
+    {
+        return $this->listingAgreements()->where('status', 'ACTIVE')->latest()->first();
+    }
+
+    public function proposals(): HasMany
+    {
+        return $this->hasMany(Proposal::class);
+    }
+
+    public function deals(): HasMany
+    {
+        return $this->hasMany(Deal::class);
     }
 
     public function createdBy(): BelongsTo

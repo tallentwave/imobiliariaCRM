@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Contact;
+use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -43,6 +45,13 @@ class RegisteredUserController extends Controller
         ]);
 
         $user->assignRole('cliente');
+
+        if ($organization = Organization::first()) {
+            Contact::firstOrCreate(
+                ['organization_id' => $organization->id, 'email' => $user->email],
+                ['type' => 'PERSON', 'full_name' => $user->name, 'user_id' => $user->id, 'status' => 'ACTIVE']
+            );
+        }
 
         event(new Registered($user));
 

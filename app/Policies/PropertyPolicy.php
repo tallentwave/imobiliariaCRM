@@ -28,7 +28,9 @@ class PropertyPolicy
             return false;
         }
 
-        return $user->hasRole('admin') || $property->agent_id === $user->id;
+        return $user->hasRole('admin')
+            || $property->agent_id === $user->id
+            || $property->listingAgreements()->where('captor_user_id', $user->id)->exists();
     }
 
     public function delete(User $user, Property $property): bool

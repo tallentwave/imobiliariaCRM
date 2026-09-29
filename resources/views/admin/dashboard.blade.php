@@ -2,7 +2,7 @@
     <h1 class="text-2xl font-bold text-slate-900">Dashboard</h1>
     <p class="text-slate-500 text-sm mt-1">Visão geral do seu negócio</p>
 
-    <div class="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="mt-6 grid grid-cols-2 lg:grid-cols-5 gap-4">
         <div class="bg-white rounded-2xl border border-slate-100 p-5">
             <p class="text-xs font-semibold text-slate-400 uppercase">Imóveis ativos</p>
             <p class="mt-2 text-2xl font-bold text-slate-900">{{ $stats['properties_available'] }}</p>
@@ -12,6 +12,11 @@
             <p class="text-xs font-semibold text-slate-400 uppercase">Leads no mês</p>
             <p class="mt-2 text-2xl font-bold text-slate-900">{{ $stats['leads_month'] }}</p>
             <p class="text-xs text-slate-400 mt-1">{{ $stats['leads_open'] }} em aberto</p>
+        </div>
+        <div class="bg-white rounded-2xl border border-slate-100 p-5">
+            <p class="text-xs font-semibold text-slate-400 uppercase">SLA estourado</p>
+            <p class="mt-2 text-2xl font-bold {{ $stats['sla_overdue'] > 0 ? 'text-red-600' : 'text-slate-900' }}">{{ $stats['sla_overdue'] }}</p>
+            <p class="text-xs text-slate-400 mt-1">leads sem 1ª resposta a tempo</p>
         </div>
         <div class="bg-white rounded-2xl border border-slate-100 p-5">
             <p class="text-xs font-semibold text-slate-400 uppercase">Negócios fechados (mês)</p>
@@ -26,7 +31,7 @@
     <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-100 p-5">
             <h2 class="font-semibold text-slate-800 mb-4">Funil de leads</h2>
-            <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+            <div class="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-11 gap-2">
                 @foreach(\App\Models\Lead::STAGES as $key => $label)
                     <div class="rounded-xl bg-slate-50 p-3 text-center">
                         <p class="text-lg font-bold text-slate-800">{{ $leadsByStage[$key] ?? 0 }}</p>

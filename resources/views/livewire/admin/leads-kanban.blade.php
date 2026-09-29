@@ -19,9 +19,9 @@
         x-text="toast"
     ></div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4 overflow-x-auto" wire:loading.class="opacity-60">
+    <div class="flex gap-4 overflow-x-auto pb-4" wire:loading.class="opacity-60">
         @foreach($stages as $stageKey => $stageLabel)
-            <div class="bg-slate-100/70 rounded-2xl p-3 min-w-[240px]">
+            <div class="bg-slate-100/70 rounded-2xl p-3 w-[240px] flex-shrink-0">
                 <div class="flex items-center justify-between mb-3 px-1">
                     <h2 class="text-sm font-bold text-slate-700">{{ $stageLabel }}</h2>
                     <span class="text-xs font-semibold text-slate-400">{{ $leads->get($stageKey, collect())->count() }}</span>

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contact;
 use App\Models\Lead;
+use App\Models\Organization;
 use App\Models\Property;
 use App\Models\User;
 use App\Notifications\NewLeadReceived;
@@ -30,7 +32,13 @@ class LeadController extends Controller
             $agentId = User::role('corretor')->where('active', true)->inRandomOrder()->value('id');
         }
 
+        $organization = Organization::first();
+
+        $contact = $this->findOrCreateContact($organization?->id, $data);
+
         $lead = Lead::create([
+            'organization_id' => $organization?->id,
+            'contact_id' => $contact?->id,
             'name' => $data['name'],
             'email' => $data['email'] ?? null,
             'phone' => $data['phone'],
@@ -39,7 +47,8 @@ class LeadController extends Controller
             'property_id' => $property?->id,
             'agent_id' => $agentId,
             'user_id' => auth()->id(),
-            'stage' => 'novo',
+            'stage' => 'NEW',
+            'temperature' => 'WARM',
         ]);
 
         $recipients = User::role('admin')->get();
@@ -51,5 +60,36 @@ class LeadController extends Controller
         Notification::send($recipients->unique('id'), new NewLeadReceived($lead));
 
         return back()->with('success', 'Recebemos seu contato! Em breve um de nossos corretores irá falar com você.');
+    }
+
+    private function findOrCreateContact(?int $organizationId, array $data): ?Contact
+    {
+        if (! $organizationId) {
+            return null;
+        }
+
+        $query = Contact::where('organization_id', $organizationId);
+
+        if (! empty($data['email'])) {
+            $query->where('email', $data['email']);
+        } else {
+            $query->where('mobile', $data['phone']);
+        }
+
+        $contact = $query->first();
+
+        if ($contact) {
+            return $contact;
+        }
+
+        return Contact::create([
+            'organization_id' => $organizationId,
+            'type' => 'PERSON',
+            'full_name' => $data['name'],
+            'email' => $data['email'] ?? null,
+            'mobile' => $data['phone'],
+            'user_id' => auth()->id(),
+            'status' => 'ACTIVE',
+        ]);
     }
 }

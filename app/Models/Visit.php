@@ -18,6 +18,16 @@ class Visit extends Model
         return $this->belongsTo(Lead::class);
     }
 
+    public function opportunity(): BelongsTo
+    {
+        return $this->belongsTo(Opportunity::class);
+    }
+
+    public function contact(): BelongsTo
+    {
+        return $this->belongsTo(Contact::class);
+    }
+
     public function property(): BelongsTo
     {
         return $this->belongsTo(Property::class);

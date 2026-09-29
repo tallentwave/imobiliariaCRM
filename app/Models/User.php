@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -29,6 +30,9 @@ class User extends Authenticatable
         'avatar',
         'active',
         'default_commission_percent',
+        'organization_id',
+        'unit_id',
+        'team_id',
     ];
 
     /**
@@ -56,9 +60,29 @@ class User extends Authenticatable
         ];
     }
 
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(Organization::class);
+    }
+
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
+
     public function properties(): HasMany
     {
         return $this->hasMany(Property::class, 'agent_id');
+    }
+
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(Contact::class, 'owner_user_id');
     }
 
     public function leads(): HasMany

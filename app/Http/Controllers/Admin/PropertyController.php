@@ -18,7 +18,7 @@ class PropertyController extends Controller
         $user = Auth::user();
 
         $properties = Property::query()
-            ->when(! $user->hasRole('admin') && ! $user->hasRole('financeiro'), fn ($q) => $q->where('agent_id', $user->id))
+            ->when(! $user->hasRole('admin') && ! $user->hasRole('financeiro') && ! $user->hasRole('captador'), fn ($q) => $q->where('agent_id', $user->id))
             ->when($request->status, fn ($q, $v) => $q->where('status', $v))
             ->when($request->q, fn ($q, $v) => $q->where('title', 'like', "%{$v}%"))
             ->with(['agent', 'images'])
@@ -47,6 +47,8 @@ class PropertyController extends Controller
 
         $data['created_by'] = Auth::id();
         $data['agent_id'] = $data['agent_id'] ?? Auth::id();
+        $data['organization_id'] = Auth::user()->organization_id;
+        $data['unit_id'] = Auth::user()->unit_id;
 
         $property = Property::create($data);
         $property->features()->sync($request->input('features', []));

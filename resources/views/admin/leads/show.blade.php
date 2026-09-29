@@ -9,9 +9,33 @@
                         <h1 class="text-xl font-bold text-slate-900">{{ $lead->name }}</h1>
                         <p class="text-sm text-slate-500 mt-1">{{ $lead->phone }} @if($lead->email) · {{ $lead->email }} @endif</p>
                         <p class="text-xs text-slate-400 mt-1">Origem: {{ ucfirst($lead->source) }} · Recebido em {{ $lead->created_at->format('d/m/Y H:i') }}</p>
+                        @if($lead->contact)
+                            <a href="{{ route('admin.contacts.show', $lead->contact) }}" class="text-xs font-semibold text-brand-700">Ver ficha do contato (360°) →</a>
+                        @endif
                     </div>
-                    <span class="text-xs font-semibold rounded-full px-3 py-1 bg-brand-50 text-brand-700">{{ $lead->stageLabel() }}</span>
+                    <div class="text-right">
+                        <span class="text-xs font-semibold rounded-full px-3 py-1 bg-brand-50 text-brand-700">{{ $lead->stageLabel() }}</span>
+                        @if($lead->isSlaOverdue())
+                            <p class="text-xs font-semibold text-red-600 mt-1">SLA estourado</p>
+                        @endif
+                    </div>
                 </div>
+
+                @if($lead->opportunities->isNotEmpty())
+                    <div class="mt-4 rounded-xl bg-emerald-50 p-3">
+                        <p class="text-xs font-semibold text-emerald-700">Oportunidade(s) geradas</p>
+                        @foreach($lead->opportunities as $opp)
+                            <a href="{{ route('admin.opportunities.show', $opp) }}" class="block text-sm text-emerald-800 hover:underline">
+                                {{ $opp->purposeLabel() }} · {{ $opp->statusLabel() }}
+                            </a>
+                        @endforeach
+                    </div>
+                @elseif(!in_array($lead->stage, \App\Models\Lead::LOST_STAGES))
+                    <form action="{{ route('admin.leads.convert', $lead) }}" method="POST" class="mt-4">
+                        @csrf
+                        <button class="text-sm font-semibold text-brand-700 hover:text-brand-800">+ Converter em oportunidade →</button>
+                    </form>
+                @endif
 
                 @if($lead->property)
                     <a href="{{ route('admin.properties.edit', $lead->property) }}" class="mt-4 flex items-center gap-3 rounded-xl bg-slate-50 p-3 hover:bg-slate-100">
@@ -107,25 +131,19 @@
                     </select>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-xs font-semibold text-slate-500">Valor negociado</label>
-                        <input type="number" step="0.01" name="negotiated_value" value="{{ $lead->negotiated_value }}" class="mt-1 w-full rounded-lg border-slate-200 text-sm">
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-slate-500">Comissão (%)</label>
-                        <input type="number" step="0.01" name="commission_percent" value="{{ $lead->commission_percent }}" class="mt-1 w-full rounded-lg border-slate-200 text-sm">
-                    </div>
+                <div>
+                    <label class="text-xs font-semibold text-slate-500">Temperatura</label>
+                    <select name="temperature" class="mt-1 w-full rounded-lg border-slate-200 text-sm">
+                        @foreach(['COLD' => 'Fria', 'WARM' => 'Morna', 'HOT' => 'Quente'] as $key => $label)
+                            <option value="{{ $key }}" @selected($lead->temperature === $key)>{{ $label }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <div>
-                    <label class="text-xs font-semibold text-slate-500">Motivo de perda (se aplicável)</label>
+                    <label class="text-xs font-semibold text-slate-500">Motivo de perda (obrigatório para etapas de saída)</label>
                     <input type="text" name="lost_reason" value="{{ $lead->lost_reason }}" class="mt-1 w-full rounded-lg border-slate-200 text-sm">
                 </div>
-
-                @if($lead->commission_value)
-                    <p class="text-sm text-slate-600">Comissão calculada: <strong>R$ {{ number_format($lead->commission_value, 2, ',', '.') }}</strong></p>
-                @endif
 
                 <button type="submit" class="w-full rounded-lg bg-brand-700 text-white font-semibold py-2.5 hover:bg-brand-800">
                     Salvar alterações

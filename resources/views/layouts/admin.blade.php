@@ -30,19 +30,61 @@
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.dashboard') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
                     Dashboard
                 </a>
-                <a href="{{ route('admin.properties.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.properties.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                    Imóveis
-                </a>
-                <a href="{{ route('admin.leads.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.leads.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                    Leads / Funil
-                </a>
-                <a href="{{ route('admin.visits.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.visits.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                    Visitas
-                </a>
+
+                @if($user->can('contacts.view'))
+                    <a href="{{ route('admin.contacts.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.contacts.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
+                        Contatos
+                    </a>
+                @endif
+
+                @if($user->can('leads.view'))
+                    <a href="{{ route('admin.leads.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.leads.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
+                        Leads / Funil
+                    </a>
+                @endif
+
+                @if($user->can('opportunities.view'))
+                    <a href="{{ route('admin.opportunities.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.opportunities.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
+                        Oportunidades
+                    </a>
+                @endif
+
+                @if($user->can('properties.view'))
+                    <a href="{{ route('admin.properties.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.properties.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
+                        Imóveis
+                    </a>
+                @endif
+
+                @if($user->can('listings.view'))
+                    <a href="{{ route('admin.listings.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.listings.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
+                        Captação
+                    </a>
+                @endif
+
+                @if($user->can('deals.view'))
+                    <a href="{{ route('admin.deals.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.deals.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
+                        Negócios
+                    </a>
+                @endif
+
+                @if($user->can('visits.view'))
+                    <a href="{{ route('admin.visits.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.visits.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
+                        Visitas
+                    </a>
+                @endif
 
                 @if($user->hasRole('admin') || $user->hasRole('financeiro'))
-                    <a href="{{ route('admin.reports.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.reports.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                        Relatórios
+                    <a href="{{ route('admin.commissions.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.commissions.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
+                        Comissões
+                    </a>
+                @endif
+
+                @if($user->hasRole('admin') || $user->hasRole('compliance'))
+                    <a href="{{ route('admin.audit.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.audit.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
+                        Auditoria
+                    </a>
+                    <a href="{{ route('admin.privacy.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.privacy.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
+                        Privacidade (LGPD)
                     </a>
                 @endif
 
