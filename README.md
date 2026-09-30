@@ -145,6 +145,30 @@ npm run dev   # ou: php artisan serve
 
 ## Deploy na Hostinger
 
+### Opção rápida: instalador automático
+
+Depois de criar o banco de dados MySQL (passo 1 abaixo) e conectar via SSH, você pode
+rodar o instalador automático em vez de seguir os comandos manuais um a um. Ele detecta o
+PHP disponível, baixa o Composer se precisar, clona/atualiza o projeto, cria o `.env`
+perguntando só os dados essenciais, instala tudo, roda as migrations e (se você quiser) o
+seed de demonstração, e ainda mostra o comando exato do cron job que falta configurar.
+
+```bash
+curl -o install-hostinger.sh -sSL https://raw.githubusercontent.com/tallentwave/imobiliariaCRM/claude/vibrant-pascal-w5ve97/deploy/install-hostinger.sh
+less install-hostinger.sh   # dê uma olhada no script antes de rodar, é sempre bom hábito
+bash install-hostinger.sh
+```
+
+Se preferir, pode passar uma pasta de destino diferente: `bash install-hostinger.sh /home/seu-usuario/nova-imoveis`.
+Ele pode ser executado mais de uma vez sem problema (é seguro rodar de novo para atualizar).
+
+Se o servidor não tiver Node.js (comum em hospedagem compartilhada), o script avisa e você
+deve rodar `npm install && npm run build` na sua máquina e enviar a pasta `public/build`
+pronta antes de rodar o instalador de novo.
+
+O restante desta seção descreve os mesmos passos manualmente, caso prefira ter controle
+total de cada etapa ou precise adaptar algo específico do seu plano de hospedagem.
+
 0. **Pré-requisitos no hPanel** (antes de qualquer coisa):
    - **Versão do PHP**: em "Avançado" → "Configuração do PHP", selecione **PHP 8.2 ou superior**
      (planos Hostinger costumam vir com uma versão antiga por padrão — o Laravel 11 não sobe com
