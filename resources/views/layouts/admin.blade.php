@@ -36,79 +36,79 @@
             <nav class="px-3 py-4 space-y-1 text-sm">
                 @php $user = auth()->user(); @endphp
 
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.dashboard') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                    Dashboard
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.dashboard') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white' }}">
+                    <x-admin.nav-icon name="dashboard" /> Dashboard
                 </a>
 
                 @if($user->can('contacts.view'))
-                    <a href="{{ route('admin.contacts.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.contacts.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                        Contatos
+                    <a href="{{ route('admin.contacts.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.contacts.*') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white' }}">
+                        <x-admin.nav-icon name="contacts" /> Contatos
                     </a>
                 @endif
 
                 @if($user->can('leads.view'))
-                    <a href="{{ route('admin.leads.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.leads.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                        Leads / Funil
+                    <a href="{{ route('admin.leads.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.leads.*') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white' }}">
+                        <x-admin.nav-icon name="leads" /> Leads / Funil
                     </a>
                 @endif
 
                 @if($user->can('opportunities.view'))
-                    <a href="{{ route('admin.opportunities.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.opportunities.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                        Oportunidades
+                    <a href="{{ route('admin.opportunities.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.opportunities.*') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white' }}">
+                        <x-admin.nav-icon name="opportunities" /> Oportunidades
                     </a>
                 @endif
 
                 @if($user->can('properties.view'))
-                    <a href="{{ route('admin.properties.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.properties.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                        Imóveis
+                    <a href="{{ route('admin.properties.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.properties.*') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white' }}">
+                        <x-admin.nav-icon name="properties" /> Imóveis
                     </a>
                 @endif
 
                 @if($user->can('listings.view'))
-                    <a href="{{ route('admin.listings.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.listings.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                        Captação
+                    <a href="{{ route('admin.listings.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.listings.*') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white' }}">
+                        <x-admin.nav-icon name="listings" /> Captação
                     </a>
                 @endif
 
                 @if($user->can('deals.view'))
-                    <a href="{{ route('admin.deals.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.deals.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                        Negócios
+                    <a href="{{ route('admin.deals.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.deals.*') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white' }}">
+                        <x-admin.nav-icon name="deals" /> Negócios
                     </a>
                 @endif
 
                 @if($user->can('visits.view'))
-                    <a href="{{ route('admin.visits.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.visits.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                        Visitas
+                    <a href="{{ route('admin.visits.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.visits.*') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white' }}">
+                        <x-admin.nav-icon name="visits" /> Visitas
                     </a>
                 @endif
 
                 @if($user->hasRole('admin') || $user->hasRole('financeiro'))
-                    <a href="{{ route('admin.commissions.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.commissions.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                        Comissões
+                    <a href="{{ route('admin.commissions.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.commissions.*') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white' }}">
+                        <x-admin.nav-icon name="commissions" /> Comissões
                     </a>
                 @endif
 
                 @if($user->hasRole('admin') || $user->hasRole('compliance'))
-                    <a href="{{ route('admin.audit.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.audit.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                        Auditoria
+                    <a href="{{ route('admin.audit.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.audit.*') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white' }}">
+                        <x-admin.nav-icon name="audit" /> Auditoria
                     </a>
-                    <a href="{{ route('admin.privacy.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.privacy.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                        Privacidade (LGPD)
+                    <a href="{{ route('admin.privacy.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.privacy.*') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white' }}">
+                        <x-admin.nav-icon name="privacy" /> Privacidade (LGPD)
                     </a>
                 @endif
 
                 @if($user->hasRole('admin'))
-                    <a href="{{ route('admin.export.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.export.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                        Exportar p/ portais
+                    <a href="{{ route('admin.export.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.export.*') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white' }}">
+                        <x-admin.nav-icon name="export" /> Exportar p/ portais
                     </a>
-                    <a href="{{ route('admin.features.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.features.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                        Características
+                    <a href="{{ route('admin.features.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.features.*') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white' }}">
+                        <x-admin.nav-icon name="features" /> Características
                     </a>
-                    <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.users.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                        Usuários
+                    <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.users.*') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white' }}">
+                        <x-admin.nav-icon name="users" /> Usuários
                     </a>
-                    <a href="{{ route('admin.settings.edit') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.settings.*') ? 'bg-slate-800 text-white' : 'hover:bg-slate-800/60' }}">
-                        Configurações
+                    <a href="{{ route('admin.settings.edit') }}" class="flex items-center gap-3 rounded-lg px-3 py-2 {{ request()->routeIs('admin.settings.*') ? 'bg-slate-800 text-white' : 'text-slate-300 hover:bg-slate-800/60 hover:text-white' }}">
+                        <x-admin.nav-icon name="settings" /> Configurações
                     </a>
                 @endif
 
@@ -159,7 +159,10 @@
                     {{ now()->translatedFormat('l, d \d\e F \d\e Y') }}
                 </div>
                 <div class="flex items-center gap-3">
-                    <span class="text-sm text-slate-600">{{ auth()->user()->name }}</span>
+                    <div class="h-8 w-8 rounded-full bg-brand-700 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                    </div>
+                    <span class="hidden sm:inline text-sm font-medium text-slate-700">{{ auth()->user()->name }}</span>
                     <span class="inline-flex items-center rounded-full bg-brand-50 text-brand-700 text-xs font-semibold px-2.5 py-1">
                         {{ ucfirst(auth()->user()->roles->first()?->name ?? '') }}
                     </span>
