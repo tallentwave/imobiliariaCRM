@@ -20,20 +20,36 @@
 </head>
 <body class="font-sans antialiased bg-slate-50 text-slate-800">
 
-    <header class="bg-white border-b border-slate-100">
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-100">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <a href="{{ route('home') }}" class="text-xl font-bold text-brand-800">{{ $settings->site_name ?? config('app.name') }}</a>
-                <nav class="flex items-center gap-6 text-sm font-medium text-slate-600">
-                    <a href="{{ route('imoveis.index') }}" class="hover:text-brand-600">Ver imóveis</a>
-                    <a href="{{ route('minha-conta') }}" class="hover:text-brand-600 {{ request()->routeIs('minha-conta') ? 'text-brand-700' : '' }}">Minha conta</a>
-                    <a href="{{ route('profile.edit') }}" class="hover:text-brand-600">Perfil</a>
+
+                <nav class="hidden md:flex items-center gap-1 text-sm font-medium text-slate-600">
+                    <a href="{{ route('imoveis.index') }}" class="px-3 py-2 rounded-lg hover:bg-slate-50 hover:text-brand-600">Ver imóveis</a>
+                    <a href="{{ route('minha-conta') }}" class="px-3 py-2 rounded-lg hover:bg-slate-50 hover:text-brand-600 {{ request()->routeIs('minha-conta') ? 'text-brand-700 bg-brand-50' : '' }}">Minha conta</a>
+                    <a href="{{ route('profile.edit') }}" class="px-3 py-2 rounded-lg hover:bg-slate-50 hover:text-brand-600 {{ request()->routeIs('profile.edit') ? 'text-brand-700 bg-brand-50' : '' }}">Meus dados</a>
+                </nav>
+
+                <div class="flex items-center gap-3">
+                    <div class="hidden sm:flex items-center gap-2.5">
+                        <div class="h-8 w-8 rounded-full bg-brand-700 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        </div>
+                        <span class="text-sm font-medium text-slate-700 max-w-[9rem] truncate">{{ auth()->user()->name }}</span>
+                    </div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="hover:text-brand-600">Sair</button>
+                        <button type="submit" class="text-sm font-medium text-slate-500 hover:text-red-600 px-2 py-2">Sair</button>
                     </form>
-                </nav>
+                </div>
             </div>
+
+            <nav class="md:hidden flex items-center gap-1 text-sm font-medium text-slate-600 pb-3 -mt-1 overflow-x-auto">
+                <a href="{{ route('imoveis.index') }}" class="px-3 py-1.5 rounded-lg hover:bg-slate-50 whitespace-nowrap">Ver imóveis</a>
+                <a href="{{ route('minha-conta') }}" class="px-3 py-1.5 rounded-lg whitespace-nowrap {{ request()->routeIs('minha-conta') ? 'text-brand-700 bg-brand-50' : 'hover:bg-slate-50' }}">Minha conta</a>
+                <a href="{{ route('profile.edit') }}" class="px-3 py-1.5 rounded-lg whitespace-nowrap {{ request()->routeIs('profile.edit') ? 'text-brand-700 bg-brand-50' : 'hover:bg-slate-50' }}">Meus dados</a>
+            </nav>
         </div>
     </header>
 
