@@ -102,6 +102,6 @@ class User extends Authenticatable
 
     public function isStaff(): bool
     {
-        return $this->hasAnyRole(['admin', 'corretor', 'financeiro']);
+        return $this->hasAnyRole(['admin', 'corretor', 'financeiro', 'captador', 'compliance']);
     }
 }
