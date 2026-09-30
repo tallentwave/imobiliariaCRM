@@ -36,7 +36,7 @@
                             </a>
                         @endforeach
                     </div>
-                @elseif(!in_array($lead->stage, \App\Models\Lead::LOST_STAGES))
+                @elseif(!in_array($lead->stage, \App\Models\Lead::LOST_STAGES) && auth()->user()->can('update', $lead))
                     <form action="{{ route('admin.leads.convert', $lead) }}" method="POST" class="mt-4">
                         @csrf
                         <button class="text-sm font-semibold text-brand-700 hover:text-brand-800">+ Converter em oportunidade →</button>
@@ -114,6 +114,7 @@
         </div>
 
         <div class="space-y-6">
+            @can('update', $lead)
             <form action="{{ route('admin.leads.update', $lead) }}" method="POST" class="bg-white rounded-2xl border border-slate-100 p-6 space-y-4">
                 @csrf @method('PUT')
                 <h2 class="font-semibold text-slate-800">Gestão do lead</h2>
@@ -155,13 +156,16 @@
                     Salvar alterações
                 </button>
             </form>
+            @endcan
 
+            @can('delete', $lead)
             <form action="{{ route('admin.leads.destroy', $lead) }}" method="POST" onsubmit="return confirm('Excluir este lead definitivamente?')">
                 @csrf @method('DELETE')
                 <button class="w-full rounded-lg border border-red-200 text-red-600 font-semibold py-2.5 hover:bg-red-50">
                     Excluir lead
                 </button>
             </form>
+            @endcan
         </div>
     </div>
 </x-admin-layout>
