@@ -29,7 +29,7 @@
                             {{ $contact->mobile }}<br>
                             <span class="text-xs text-slate-400">{{ $contact->email }}</span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600">{{ $contact->owner->name ?? '—' }}</td>
+                        <td class="px-4 py-3 text-slate-600">{{ $contact->owner?->name ?? '—' }}</td>
                         <td class="px-4 py-3">
                             <span class="text-xs font-semibold rounded-full px-2.5 py-1 {{ $contact->status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500' }}">
                                 {{ $contact->status }}

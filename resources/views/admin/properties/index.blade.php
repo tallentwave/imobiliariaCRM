@@ -36,7 +36,7 @@
                             <p class="font-semibold text-slate-800">{{ $property->title }}</p>
                             <p class="text-xs text-slate-500">{{ $property->neighborhood }}, {{ $property->city }} · {{ $property->reference_code }}</p>
                         </td>
-                        <td class="px-4 py-3 text-slate-600">{{ $property->agent->name ?? '—' }}</td>
+                        <td class="px-4 py-3 text-slate-600">{{ $property->agent?->name ?? '—' }}</td>
                         <td class="px-4 py-3 text-slate-600">
                             @if($property->price)
                                 R$ {{ number_format($property->price, 0, ',', '.') }}

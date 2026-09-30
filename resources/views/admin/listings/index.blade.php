@@ -33,9 +33,9 @@
             <tbody class="divide-y divide-slate-100">
                 @forelse($agreements as $agreement)
                     <tr class="hover:bg-slate-50">
-                        <td class="px-4 py-3 font-semibold text-slate-800">{{ $agreement->property->title }}</td>
+                        <td class="px-4 py-3 font-semibold text-slate-800">{{ $agreement->property?->title ?? 'Imóvel removido' }}</td>
                         <td class="px-4 py-3 text-slate-600">{{ $agreement->typeLabel() }}</td>
-                        <td class="px-4 py-3 text-slate-600">{{ $agreement->captor->name ?? '—' }}</td>
+                        <td class="px-4 py-3 text-slate-600">{{ $agreement->captor?->name ?? '—' }}</td>
                         <td class="px-4 py-3 text-slate-600">
                             {{ $agreement->starts_at?->format('d/m/y') }} – {{ $agreement->ends_at?->format('d/m/y') }}
                             @if($agreement->isExpired())<span class="text-red-500 text-xs font-semibold"> (expirada)</span>@endif

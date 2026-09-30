@@ -56,7 +56,7 @@
                     <a href="{{ route('admin.leads.show', $lead) }}" class="flex items-center justify-between py-3 hover:bg-slate-50 -mx-2 px-2 rounded-lg">
                         <div>
                             <p class="text-sm font-semibold text-slate-800">{{ $lead->name }}</p>
-                            <p class="text-xs text-slate-500">{{ $lead->property->title ?? 'Contato geral' }}</p>
+                            <p class="text-xs text-slate-500">{{ $lead->property?->title ?? 'Contato geral' }}</p>
                         </div>
                         <span class="text-xs font-semibold text-slate-500">{{ $lead->stageLabel() }}</span>
                     </a>
@@ -71,9 +71,9 @@
             <div class="space-y-3">
                 @forelse($upcomingVisits as $visit)
                     <div class="rounded-xl bg-slate-50 p-3">
-                        <p class="text-sm font-semibold text-slate-800">{{ $visit->property->title }}</p>
+                        <p class="text-sm font-semibold text-slate-800">{{ $visit->property?->title ?? 'Imóvel removido' }}</p>
                         <p class="text-xs text-slate-500 mt-1">{{ $visit->scheduled_at->translatedFormat('d/m/Y H:i') }}</p>
-                        <p class="text-xs text-slate-400">{{ $visit->agent->name ?? 'Sem corretor' }}</p>
+                        <p class="text-xs text-slate-400">{{ $visit->agent?->name ?? 'Sem corretor' }}</p>
                     </div>
                 @empty
                     <p class="text-sm text-slate-500">Nenhuma visita agendada.</p>

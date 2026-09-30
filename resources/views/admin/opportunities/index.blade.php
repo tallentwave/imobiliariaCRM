@@ -26,7 +26,7 @@
                                 —
                             @endif
                         </td>
-                        <td class="px-4 py-3 text-slate-600">{{ $opportunity->assignedUser->name ?? '—' }}</td>
+                        <td class="px-4 py-3 text-slate-600">{{ $opportunity->assignedUser?->name ?? '—' }}</td>
                         <td class="px-4 py-3">
                             <span class="text-xs font-semibold rounded-full px-2.5 py-1 {{ match($opportunity->status) { 'WON' => 'bg-emerald-50 text-emerald-700', 'LOST' => 'bg-red-50 text-red-600', default => 'bg-amber-50 text-amber-700' } }}">
                                 {{ $opportunity->statusLabel() }}

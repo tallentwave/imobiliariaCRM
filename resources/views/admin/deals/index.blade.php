@@ -17,10 +17,10 @@
             <tbody class="divide-y divide-slate-100">
                 @forelse($deals as $deal)
                     <tr class="hover:bg-slate-50">
-                        <td class="px-4 py-3 font-semibold text-slate-800">{{ $deal->property->title }}</td>
+                        <td class="px-4 py-3 font-semibold text-slate-800">{{ $deal->property?->title ?? 'Imóvel removido' }}</td>
                         <td class="px-4 py-3 text-slate-600">{{ $deal->buyerContact?->displayName() ?? '—' }}</td>
                         <td class="px-4 py-3 text-slate-600">R$ {{ number_format($deal->value, 0, ',', '.') }}</td>
-                        <td class="px-4 py-3 text-slate-600">{{ $deal->agent->name ?? '—' }}</td>
+                        <td class="px-4 py-3 text-slate-600">{{ $deal->agent?->name ?? '—' }}</td>
                         <td class="px-4 py-3">
                             <span class="text-xs font-semibold rounded-full px-2.5 py-1
                                 {{ match($deal->status) { 'CLOSED_WON' => 'bg-emerald-50 text-emerald-700', 'CLOSED_LOST' => 'bg-red-50 text-red-600', default => 'bg-amber-50 text-amber-700' } }}">

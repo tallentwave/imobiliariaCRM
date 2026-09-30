@@ -3,7 +3,7 @@
 
     <div class="mt-4 flex items-start justify-between flex-wrap gap-3">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900">{{ $deal->property->title }}</h1>
+            <h1 class="text-2xl font-bold text-slate-900">{{ $deal->property?->title ?? 'Imóvel removido' }}</h1>
             <p class="text-sm text-slate-500 mt-1">R$ {{ number_format($deal->value, 0, ',', '.') }} · Criado em {{ $deal->created_at->format('d/m/Y') }}</p>
         </div>
 
@@ -30,8 +30,8 @@
 
         <div x-show="tab === 'resumo'" class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div class="bg-white rounded-2xl border border-slate-100 p-5"><p class="text-xs text-slate-400 uppercase font-semibold">Status</p><p class="mt-1 font-bold text-slate-800">{{ $deal->statusLabel() }}</p></div>
-            <div class="bg-white rounded-2xl border border-slate-100 p-5"><p class="text-xs text-slate-400 uppercase font-semibold">Corretor</p><p class="mt-1 font-bold text-slate-800">{{ $deal->agent->name ?? '—' }}</p></div>
-            <div class="bg-white rounded-2xl border border-slate-100 p-5"><p class="text-xs text-slate-400 uppercase font-semibold">Captador</p><p class="mt-1 font-bold text-slate-800">{{ $deal->captor->name ?? '—' }}</p></div>
+            <div class="bg-white rounded-2xl border border-slate-100 p-5"><p class="text-xs text-slate-400 uppercase font-semibold">Corretor</p><p class="mt-1 font-bold text-slate-800">{{ $deal->agent?->name ?? '—' }}</p></div>
+            <div class="bg-white rounded-2xl border border-slate-100 p-5"><p class="text-xs text-slate-400 uppercase font-semibold">Captador</p><p class="mt-1 font-bold text-slate-800">{{ $deal->captor?->name ?? '—' }}</p></div>
             @if($deal->proposal)
                 <div class="bg-white rounded-2xl border border-slate-100 p-5 lg:col-span-3">
                     <p class="text-xs text-slate-400 uppercase font-semibold">Proposta aceita</p>
@@ -43,16 +43,20 @@
         <div x-show="tab === 'partes'" x-cloak class="mt-6 bg-white rounded-2xl border border-slate-100 p-5 space-y-2">
             @foreach($deal->parties as $party)
                 <a href="{{ route('admin.contacts.show', $party->contact) }}" class="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50">
-                    <span class="text-sm text-slate-700">{{ $party->contact->displayName() }}</span>
+                    <span class="text-sm text-slate-700">{{ $party->contact?->displayName() ?? '—' }}</span>
                     <span class="text-xs font-semibold text-slate-500">{{ $party->roleLabel() }}</span>
                 </a>
             @endforeach
         </div>
 
         <div x-show="tab === 'imovel'" x-cloak class="mt-6 bg-white rounded-2xl border border-slate-100 p-5">
-            <p class="font-semibold text-slate-800">{{ $deal->property->title }}</p>
-            <p class="text-sm text-slate-500 mt-1">{{ $deal->property->neighborhood }}, {{ $deal->property->city }} — {{ $deal->property->reference_code }}</p>
-            <a href="{{ route('admin.properties.edit', $deal->property) }}" class="text-xs font-semibold text-brand-700 mt-2 inline-block">Editar imóvel →</a>
+            @if($deal->property)
+                <p class="font-semibold text-slate-800">{{ $deal->property->title }}</p>
+                <p class="text-sm text-slate-500 mt-1">{{ $deal->property->neighborhood }}, {{ $deal->property->city }} — {{ $deal->property->reference_code }}</p>
+                <a href="{{ route('admin.properties.edit', $deal->property) }}" class="text-xs font-semibold text-brand-700 mt-2 inline-block">Editar imóvel →</a>
+            @else
+                <p class="text-sm text-slate-400">Imóvel removido.</p>
+            @endif
         </div>
 
         <div x-show="tab === 'documentos'" x-cloak class="mt-6 bg-white rounded-2xl border border-slate-100 p-5">
@@ -88,7 +92,7 @@
                     <div class="mt-2 space-y-1">
                         @foreach($event->splits as $split)
                             <div class="flex items-center justify-between text-sm py-1 border-b border-slate-50 last:border-0">
-                                <span>{{ $split->dimensionLabel() }} — {{ $split->user->name ?? 'Empresa' }}</span>
+                                <span>{{ $split->dimensionLabel() }} — {{ $split->user?->name ?? 'Empresa' }}</span>
                                 <span class="font-semibold">R$ {{ number_format($split->value, 2, ',', '.') }} {{ $split->paid ? '✓' : '' }}</span>
                             </div>
                         @endforeach

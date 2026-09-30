@@ -35,8 +35,8 @@
                 <image>{{ $image->url() }}</image>
             @endforeach
         </images>
-        <contact_name>{{ $property->agent->name ?? $settings->site_name }}</contact_name>
-        <contact_phone>{{ $property->agent->phone ?? $settings->phone }}</contact_phone>
+        <contact_name>{{ $property->agent?->name ?? $settings->site_name }}</contact_name>
+        <contact_phone>{{ $property->agent?->phone ?? $settings->phone }}</contact_phone>
     </ad>
     @endforeach
 </ads>

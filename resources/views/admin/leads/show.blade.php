@@ -66,7 +66,7 @@
                     <div class="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
                         <div>
                             <p class="text-sm text-slate-700">{{ $visit->scheduled_at->format('d/m/Y H:i') }}</p>
-                            <p class="text-xs text-slate-400">{{ $visit->property->title }}</p>
+                            <p class="text-xs text-slate-400">{{ $visit->property?->title ?? 'Imóvel removido' }}</p>
                         </div>
                         <span class="text-xs font-semibold text-slate-500">{{ ucfirst($visit->status) }}</span>
                     </div>
@@ -89,7 +89,7 @@
                                 {{ $document->name }}
                             </a>
                             <p class="text-xs text-slate-400">
-                                {{ $document->sizeForHumans() }} · enviado por {{ $document->uploadedBy->name ?? '—' }}
+                                {{ $document->sizeForHumans() }} · enviado por {{ $document->uploadedBy?->name ?? '—' }}
                                 em {{ $document->created_at->format('d/m/Y') }}
                             </p>
                         </div>

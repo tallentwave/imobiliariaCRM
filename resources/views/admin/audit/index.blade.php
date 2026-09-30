@@ -23,7 +23,7 @@
                 @forelse($logs as $log)
                     <tr class="hover:bg-slate-50">
                         <td class="px-4 py-3 text-slate-500 whitespace-nowrap">{{ $log->created_at->format('d/m/Y H:i') }}</td>
-                        <td class="px-4 py-3 text-slate-700">{{ $log->user->name ?? 'Sistema' }}</td>
+                        <td class="px-4 py-3 text-slate-700">{{ $log->user?->name ?? 'Sistema' }}</td>
                         <td class="px-4 py-3"><code class="text-xs bg-slate-100 rounded px-1.5 py-0.5">{{ $log->event }}</code></td>
                         <td class="px-4 py-3 text-slate-500">{{ $log->field ?? '—' }}</td>
                         <td class="px-4 py-3 text-slate-500">

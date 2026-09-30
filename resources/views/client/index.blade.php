@@ -36,7 +36,7 @@
                             <div class="bg-white rounded-2xl border border-slate-100 p-5">
                                 <div class="flex items-start justify-between gap-3">
                                     <div>
-                                        <p class="font-semibold text-slate-800">{{ $deal->property->title ?? 'Imóvel' }}</p>
+                                        <p class="font-semibold text-slate-800">{{ $deal->property?->title ?? 'Imóvel' }}</p>
                                         <p class="text-xs text-slate-500 mt-0.5">Negócio · R$ {{ number_format($deal->value, 0, ',', '.') }}</p>
                                     </div>
                                     <span @class([
@@ -64,7 +64,7 @@
                         @foreach($proposals as $proposal)
                             <div class="bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between gap-3">
                                 <div>
-                                    <p class="font-semibold text-slate-800">{{ $proposal->property->title ?? 'Imóvel' }}</p>
+                                    <p class="font-semibold text-slate-800">{{ $proposal->property?->title ?? 'Imóvel' }}</p>
                                     <p class="text-xs text-slate-500 mt-0.5">
                                         Proposta de R$ {{ number_format($proposal->price, 0, ',', '.') }}
                                         @if($proposal->version > 1) · versão {{ $proposal->version }} @endif
@@ -113,8 +113,8 @@
                         @foreach($visits as $visit)
                             <div class="p-4 flex items-center justify-between gap-3">
                                 <div>
-                                    <p class="font-semibold text-slate-800 text-sm">{{ $visit->property->title }}</p>
-                                    <p class="text-xs text-slate-500">{{ $visit->scheduled_at->translatedFormat('d/m/Y \à\s H:i') }} · com {{ $visit->agent->name ?? 'a definir' }}</p>
+                                    <p class="font-semibold text-slate-800 text-sm">{{ $visit->property?->title ?? 'Imóvel' }}</p>
+                                    <p class="text-xs text-slate-500">{{ $visit->scheduled_at->translatedFormat('d/m/Y \à\s H:i') }} · com {{ $visit->agent?->name ?? 'a definir' }}</p>
                                 </div>
                                 <span class="text-xs font-semibold rounded-full px-3 py-1 whitespace-nowrap
                                     {{ $visit->status === 'agendada' ? 'bg-amber-50 text-amber-700' : ($visit->status === 'realizada' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500') }}">
@@ -136,7 +136,7 @@
                     <div class="bg-white rounded-xl border border-slate-100 divide-y divide-slate-100">
                         @foreach($leads as $lead)
                             <div class="p-4">
-                                <p class="font-semibold text-slate-800 text-sm">{{ $lead->property->title ?? 'Contato geral' }}</p>
+                                <p class="font-semibold text-slate-800 text-sm">{{ $lead->property?->title ?? 'Contato geral' }}</p>
                                 <p class="text-xs text-slate-500 mt-1">{{ $lead->stageLabel() }} · enviado em {{ $lead->created_at->format('d/m/Y') }}</p>
                             </div>
                         @endforeach

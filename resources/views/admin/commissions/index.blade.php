@@ -62,7 +62,7 @@
                 <div class="bg-white rounded-2xl border border-slate-100 p-5">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="font-semibold text-slate-800">{{ $event->deal->property->title ?? '—' }}</p>
+                            <p class="font-semibold text-slate-800">{{ $event->deal?->property?->title ?? '—' }}</p>
                             <p class="text-xs text-slate-500">R$ {{ number_format($event->total_commission_value, 2, ',', '.') }} ({{ $event->total_commission_percent }}%)</p>
                         </div>
                         <div class="flex items-center gap-2">
@@ -81,7 +81,7 @@
                     <div class="mt-3 divide-y divide-slate-50">
                         @foreach($event->splits as $split)
                             <div class="flex items-center justify-between py-2 text-sm">
-                                <span>{{ $split->dimensionLabel() }} — {{ $split->user->name ?? 'Empresa' }} ({{ $split->percentage }}%)</span>
+                                <span>{{ $split->dimensionLabel() }} — {{ $split->user?->name ?? 'Empresa' }} ({{ $split->percentage }}%)</span>
                                 <div class="flex items-center gap-2">
                                     <span class="font-semibold">R$ {{ number_format($split->value, 2, ',', '.') }}</span>
                                     @if(! $split->paid)

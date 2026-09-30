@@ -57,10 +57,10 @@
                                         <span class="shrink-0 h-2 w-2 rounded-full bg-red-500" title="SLA estourado"></span>
                                     @endif
                                 </div>
-                                <p class="text-xs text-slate-500 mt-0.5">{{ $lead->property->title ?? 'Contato geral' }}</p>
+                                <p class="text-xs text-slate-500 mt-0.5">{{ $lead->property?->title ?? 'Contato geral' }}</p>
                                 <p class="text-xs text-slate-400 mt-0.5">{{ $lead->phone }}</p>
                             </a>
-                            <p class="text-[11px] text-slate-400 mt-2">{{ $lead->agent->name ?? 'Sem corretor' }} · {{ $lead->created_at->format('d/m') }}</p>
+                            <p class="text-[11px] text-slate-400 mt-2">{{ $lead->agent?->name ?? 'Sem corretor' }} · {{ $lead->created_at->format('d/m') }}</p>
                         </div>
                     @empty
                         <p class="text-xs text-slate-400 px-1 py-2">Arraste um lead para cá.</p>

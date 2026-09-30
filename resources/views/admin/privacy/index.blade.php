@@ -28,7 +28,7 @@
                                 {{ $request->statusLabel() }}
                             </span>
                         </td>
-                        <td class="px-4 py-3 text-slate-600">{{ $request->handledBy->name ?? '—' }}</td>
+                        <td class="px-4 py-3 text-slate-600">{{ $request->handledBy?->name ?? '—' }}</td>
                         <td class="px-4 py-3 text-right">
                             <form action="{{ route('admin.privacy.update', $request) }}" method="POST" class="flex items-center gap-2 justify-end">
                                 @csrf @method('PATCH')

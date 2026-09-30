@@ -22,7 +22,7 @@
                     @forelse($contact->leads as $lead)
                         <a href="{{ route('admin.leads.show', $lead) }}" class="flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100">
                             <div>
-                                <p class="text-sm font-semibold text-slate-800">{{ $lead->property->title ?? 'Contato geral' }}</p>
+                                <p class="text-sm font-semibold text-slate-800">{{ $lead->property?->title ?? 'Contato geral' }}</p>
                                 <p class="text-xs text-slate-400">Lead criado em {{ $lead->created_at->format('d/m/Y') }} · origem: {{ $lead->source }}</p>
                             </div>
                             <span class="text-xs font-semibold text-slate-500">{{ $lead->stageLabel() }}</span>
@@ -60,7 +60,7 @@
             <div class="bg-white rounded-2xl border border-slate-100 p-6">
                 <h2 class="font-semibold text-slate-800 mb-4">Relacionamentos</h2>
                 @forelse($contact->relationships as $rel)
-                    <p class="text-sm text-slate-600">{{ ucfirst(strtolower($rel->relationship_type)) }}: {{ $rel->relatedContact->displayName() ?? '—' }}</p>
+                    <p class="text-sm text-slate-600">{{ ucfirst(strtolower($rel->relationship_type)) }}: {{ $rel->relatedContact?->displayName() ?? '—' }}</p>
                 @empty
                     <p class="text-sm text-slate-400">Nenhum relacionamento cadastrado.</p>
                 @endforelse
@@ -72,7 +72,7 @@
                 <h2 class="font-semibold text-slate-800 mb-3">Dados</h2>
                 <dl class="text-sm space-y-2">
                     <div><dt class="text-xs text-slate-400">Tipo</dt><dd class="text-slate-700">{{ $contact->type === 'COMPANY' ? 'Empresa' : 'Pessoa física' }}</dd></div>
-                    <div><dt class="text-xs text-slate-400">Responsável</dt><dd class="text-slate-700">{{ $contact->owner->name ?? '—' }}</dd></div>
+                    <div><dt class="text-xs text-slate-400">Responsável</dt><dd class="text-slate-700">{{ $contact->owner?->name ?? '—' }}</dd></div>
                     <div><dt class="text-xs text-slate-400">Status</dt><dd class="text-slate-700">{{ $contact->status }}</dd></div>
                     <div><dt class="text-xs text-slate-400">Cadastrado em</dt><dd class="text-slate-700">{{ $contact->created_at->format('d/m/Y') }}</dd></div>
                 </dl>

@@ -7,7 +7,7 @@
                 <div class="flex items-start justify-between">
                     <div>
                         <h1 class="text-xl font-bold text-slate-900">{{ $opportunity->contact->displayName() }}</h1>
-                        <p class="text-sm text-slate-500 mt-1">{{ $opportunity->purposeLabel() }} · Responsável: {{ $opportunity->assignedUser->name ?? '—' }}</p>
+                        <p class="text-sm text-slate-500 mt-1">{{ $opportunity->purposeLabel() }} · Responsável: {{ $opportunity->assignedUser?->name ?? '—' }}</p>
                         <a href="{{ route('admin.contacts.show', $opportunity->contact) }}" class="text-xs font-semibold text-brand-700">Ver ficha do contato →</a>
                     </div>
                     <span class="text-xs font-semibold rounded-full px-3 py-1 bg-brand-50 text-brand-700">{{ $opportunity->statusLabel() }}</span>
@@ -146,7 +146,7 @@
                 <h2 class="font-semibold text-slate-800 mb-4">Visitas</h2>
                 @forelse($opportunity->visits as $visit)
                     <div class="flex items-center justify-between py-2 border-b border-slate-50 last:border-0">
-                        <p class="text-sm text-slate-700">{{ $visit->property->title }} · {{ $visit->scheduled_at->format('d/m/Y H:i') }}</p>
+                        <p class="text-sm text-slate-700">{{ $visit->property?->title ?? 'Imóvel removido' }} · {{ $visit->scheduled_at->format('d/m/Y H:i') }}</p>
                         <span class="text-xs font-semibold text-slate-500">{{ ucfirst($visit->status) }}</span>
                     </div>
                 @empty
@@ -175,7 +175,7 @@
                     <h2 class="font-semibold text-slate-800 mb-3">Negócios (Deal Room)</h2>
                     @foreach($opportunity->deals as $deal)
                         <a href="{{ route('admin.deals.show', $deal) }}" class="block text-sm text-brand-700 hover:text-brand-800 py-1">
-                            {{ $deal->property->title }} — {{ $deal->statusLabel() }}
+                            {{ $deal->property?->title ?? 'Imóvel removido' }} — {{ $deal->statusLabel() }}
                         </a>
                     @endforeach
                 </div>

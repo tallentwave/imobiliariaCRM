@@ -21,8 +21,8 @@
                 @forelse($visits as $visit)
                     <tr class="hover:bg-slate-50">
                         <td class="px-4 py-3 text-slate-700">{{ $visit->scheduled_at->format('d/m/Y H:i') }}</td>
-                        <td class="px-4 py-3 text-slate-700">{{ $visit->property->title }}</td>
-                        <td class="px-4 py-3 text-slate-600">{{ $visit->agent->name ?? '—' }}</td>
+                        <td class="px-4 py-3 text-slate-700">{{ $visit->property?->title ?? 'Imóvel removido' }}</td>
+                        <td class="px-4 py-3 text-slate-600">{{ $visit->agent?->name ?? '—' }}</td>
                         <td class="px-4 py-3">
                             <span class="text-xs font-semibold rounded-full px-2.5 py-1
                                 {{ match($visit->status) { 'agendada' => 'bg-amber-50 text-amber-700', 'realizada' => 'bg-emerald-50 text-emerald-700', default => 'bg-slate-100 text-slate-500' } }}">

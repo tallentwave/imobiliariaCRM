@@ -2,7 +2,7 @@
     <div class="flex items-start justify-between">
         <div>
             <p class="text-sm font-semibold text-slate-800">
-                Versão {{ $proposal->version }} · {{ $proposal->property->title }}
+                Versão {{ $proposal->version }} · {{ $proposal->property?->title ?? 'Imóvel removido' }}
             </p>
             <p class="text-lg font-bold text-slate-900 mt-1">R$ {{ number_format($proposal->price, 0, ',', '.') }}</p>
             @if($proposal->down_payment)
