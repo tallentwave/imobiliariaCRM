@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Contact;
 use App\Models\Lead;
 use App\Models\Opportunity;
 use App\Models\User;
@@ -57,6 +58,14 @@ class LeadController extends Controller
     {
         $this->authorize('update', $lead);
 
+        // Leads antigos (ou criados sem formulário) podem não ter um contato
+        // vinculado, mas opportunities.contact_id é obrigatório — cria/associa
+        // um contato a partir dos próprios dados do lead antes de prosseguir.
+        if (! $lead->contact_id) {
+            $contact = $this->findOrCreateContactForLead($lead);
+            $lead->update(['contact_id' => $contact->id]);
+        }
+
         $opportunity = Opportunity::create([
             'organization_id' => $lead->organization_id,
             'unit_id' => $lead->unit_id,
@@ -93,5 +102,36 @@ class LeadController extends Controller
         $lead->delete();
 
         return redirect()->route('admin.leads.index')->with('success', 'Lead removido.');
+    }
+
+    private function findOrCreateContactForLead(Lead $lead): Contact
+    {
+        $query = Contact::where('organization_id', $lead->organization_id);
+
+        if ($lead->email) {
+            $query->where('email', $lead->email);
+        } elseif ($lead->phone) {
+            $query->where('mobile', $lead->phone);
+        } else {
+            return Contact::create([
+                'organization_id' => $lead->organization_id,
+                'unit_id' => $lead->unit_id,
+                'type' => 'PERSON',
+                'full_name' => $lead->name,
+                'owner_user_id' => $lead->agent_id,
+                'status' => 'ACTIVE',
+            ]);
+        }
+
+        return $query->first() ?? Contact::create([
+            'organization_id' => $lead->organization_id,
+            'unit_id' => $lead->unit_id,
+            'type' => 'PERSON',
+            'full_name' => $lead->name,
+            'email' => $lead->email,
+            'mobile' => $lead->phone,
+            'owner_user_id' => $lead->agent_id,
+            'status' => 'ACTIVE',
+        ]);
     }
 }
