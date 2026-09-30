@@ -30,6 +30,7 @@ class PropertyPolicy
 
         return $user->hasRole('admin')
             || $property->agent_id === $user->id
+            || $property->created_by === $user->id
             || $property->listingAgreements()->where('captor_user_id', $user->id)->exists();
     }
 

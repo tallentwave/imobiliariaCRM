@@ -188,6 +188,7 @@
             <div>
                 <label class="text-xs font-semibold text-slate-500">Corretor responsável</label>
                 <select name="agent_id" class="mt-1 w-full rounded-lg border-slate-200 text-sm">
+                    <option value="" @selected(! collect($agents)->pluck('id')->contains(old('agent_id', $property->agent_id ?? auth()->id())))>— Sem corretor definido —</option>
                     @foreach($agents as $agent)
                         <option value="{{ $agent->id }}" @selected(old('agent_id', $property->agent_id ?? auth()->id()) == $agent->id)>{{ $agent->name }}</option>
                     @endforeach
