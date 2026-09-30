@@ -171,10 +171,17 @@ fi
 "$PHP_BIN" artisan migrate --force
 c_ok "Migrations executadas."
 
-read -rp "Deseja criar os dados de demonstração (organização, unidade e usuário admin inicial)? [s/N]: " SEED_ANSWER
+# Organização, unidade, permissões e o usuário admin são essenciais — sem isso
+# não tem como fazer login no sistema. Sempre rodam (são idempotentes: usam
+# firstOrCreate, então re-executar não duplica nada).
+"$PHP_BIN" artisan db:seed --class=RoleSeeder --force
+"$PHP_BIN" artisan db:seed --class=FeatureSeeder --force
+c_ok "Organização, permissões e usuário admin prontos — login: admin@novaimoveis.com.br / senha123 (troque assim que entrar!)"
+
+read -rp "Deseja também criar dados de demonstração (imóveis, leads e negócios fictícios de exemplo)? [s/N]: " SEED_ANSWER
 if [[ "${SEED_ANSWER:-}" =~ ^[sS]$ ]]; then
-  "$PHP_BIN" artisan db:seed --force
-  c_ok "Seed executado — login inicial: admin@novaimoveis.com.br / senha123 (troque assim que entrar!)"
+  "$PHP_BIN" artisan db:seed --class=DemoDataSeeder --force
+  c_ok "Dados de demonstração criados."
 fi
 
 # 8) Storage e cache de produção ---------------------------------------------
