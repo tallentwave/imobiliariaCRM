@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Notifications\NewLeadReceived;
 use App\Services\LeadAssignmentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 
 class LeadController extends Controller
@@ -56,7 +57,14 @@ class LeadController extends Controller
             $recipients->push($agent);
         }
 
-        Notification::send($recipients->unique('id'), new NewLeadReceived($lead));
+        // O aviso por e-mail para a equipe é um efeito colateral, não o objetivo do
+        // envio do formulário — uma falha aqui (SMTP fora do ar, mal configurado)
+        // nunca pode impedir o visitante de ver a confirmação do contato enviado.
+        try {
+            Notification::send($recipients->unique('id'), new NewLeadReceived($lead));
+        } catch (\Throwable $e) {
+            Log::warning('Falha ao notificar equipe sobre novo lead #'.$lead->id.': '.$e->getMessage());
+        }
 
         return back()->with('success', 'Recebemos seu contato! Em breve um de nossos corretores irá falar com você.');
     }

@@ -6,6 +6,7 @@ use App\Models\Property;
 use App\Models\SavedSearch;
 use App\Notifications\NewMatchingProperties;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class NotifySavedSearches extends Command
 {
@@ -42,7 +43,15 @@ class NotifySavedSearches extends Command
 
             $searchUrl = route('imoveis.index', $search->filters);
 
-            $search->user->notify(new NewMatchingProperties($matches, $search->name ?? 'Minha busca', $searchUrl));
+            // Um e-mail que falha (SMTP fora do ar, mal configurado) nunca pode
+            // impedir as demais buscas salvas de serem processadas no mesmo lote.
+            try {
+                $search->user->notify(new NewMatchingProperties($matches, $search->name ?? 'Minha busca', $searchUrl));
+            } catch (\Throwable $e) {
+                Log::warning('Falha ao notificar busca salva #'.$search->id.': '.$e->getMessage());
+
+                continue;
+            }
 
             $search->update(['last_notified_at' => now()]);
 

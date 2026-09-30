@@ -58,7 +58,7 @@ class ProcessLeadSla extends Command
     private function remindAgent(Lead $lead): void
     {
         if ($lead->agent) {
-            $lead->agent->notify(new LeadSlaAlert($lead, 'reminder'));
+            $this->notifySafely($lead->agent, new LeadSlaAlert($lead, 'reminder'), $lead);
         }
     }
 
@@ -69,7 +69,7 @@ class ProcessLeadSla extends Command
         $leaders = User::role('admin')->get();
 
         foreach ($leaders as $leader) {
-            $leader->notify(new LeadSlaAlert($lead, 'escalation'));
+            $this->notifySafely($leader, new LeadSlaAlert($lead, 'escalation'), $lead);
         }
 
         AuditLogger::log('lead.sla_escalated', $lead, 'stage', null, $lead->stage, 'Sem primeira resposta em 10 minutos');
@@ -92,6 +92,19 @@ class ProcessLeadSla extends Command
 
         AuditLogger::log('lead.auto_redistributed', $lead, 'agent_id', $oldAgentId, $newAgent->id, 'Sem primeira resposta em 15 minutos (SLA)');
 
-        $newAgent->notify(new LeadSlaAlert($lead, 'redistributed'));
+        $this->notifySafely($newAgent, new LeadSlaAlert($lead, 'redistributed'), $lead);
+    }
+
+    /**
+     * Um e-mail que falha (SMTP fora do ar, mal configurado) nunca pode travar o
+     * processamento dos demais leads em aberto no mesmo lote do cron.
+     */
+    private function notifySafely(User $user, $notification, Lead $lead): void
+    {
+        try {
+            $user->notify($notification);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Falha ao enviar alerta de SLA do lead #'.$lead->id.' para o usuário #'.$user->id.': '.$e->getMessage());
+        }
     }
 }
