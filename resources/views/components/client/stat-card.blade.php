@@ -2,16 +2,16 @@
 
 @php
     $colors = [
-        'brand' => 'bg-brand-50 text-brand-700',
-        'amber' => 'bg-amber-50 text-amber-700',
-        'emerald' => 'bg-emerald-50 text-emerald-700',
-        'violet' => 'bg-violet-50 text-violet-700',
+        'brand' => 'bg-gradient-to-br from-brand-500 to-brand-700 text-white',
+        'amber' => 'bg-gradient-to-br from-amber-400 to-amber-600 text-white',
+        'emerald' => 'bg-gradient-to-br from-emerald-400 to-emerald-600 text-white',
+        'violet' => 'bg-gradient-to-br from-violet-400 to-violet-600 text-white',
     ];
     $iconBg = $colors[$color] ?? $colors['brand'];
 @endphp
 
-<div class="bg-white rounded-2xl border border-slate-100 p-5 flex items-center gap-4">
-    <div class="h-11 w-11 rounded-xl {{ $iconBg }} flex items-center justify-center flex-shrink-0">
+<div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow p-5 flex items-center gap-4">
+    <div class="h-12 w-12 rounded-2xl {{ $iconBg }} flex items-center justify-center flex-shrink-0 shadow-sm">
         {{ $slot }}
     </div>
     <div>
