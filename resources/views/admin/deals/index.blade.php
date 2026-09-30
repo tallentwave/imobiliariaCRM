@@ -18,7 +18,7 @@
                 @forelse($deals as $deal)
                     <tr class="hover:bg-slate-50">
                         <td class="px-4 py-3 font-semibold text-slate-800">{{ $deal->property->title }}</td>
-                        <td class="px-4 py-3 text-slate-600">{{ $deal->buyerContact->displayName() ?? '—' }}</td>
+                        <td class="px-4 py-3 text-slate-600">{{ $deal->buyerContact?->displayName() ?? '—' }}</td>
                         <td class="px-4 py-3 text-slate-600">R$ {{ number_format($deal->value, 0, ',', '.') }}</td>
                         <td class="px-4 py-3 text-slate-600">{{ $deal->agent->name ?? '—' }}</td>
                         <td class="px-4 py-3">
