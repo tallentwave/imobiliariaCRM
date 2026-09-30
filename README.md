@@ -147,20 +147,30 @@ npm run dev   # ou: php artisan serve
 
 ### Opção rápida: instalador automático
 
-Depois de criar o banco de dados MySQL (passo 1 abaixo) e conectar via SSH, você pode
-rodar o instalador automático em vez de seguir os comandos manuais um a um. Ele detecta o
-PHP disponível, baixa o Composer se precisar, clona/atualiza o projeto, cria o `.env`
-perguntando só os dados essenciais, instala tudo, roda as migrations e (se você quiser) o
-seed de demonstração, e ainda mostra o comando exato do cron job que falta configurar.
+Depois de criar o banco de dados MySQL (passo 1 abaixo), garantir que o domínio já está
+adicionado na hospedagem (hPanel > Sites/Domínios) e conectar via SSH, você pode rodar o
+instalador automático em vez de seguir os comandos manuais um a um. Ele detecta o PHP
+disponível, baixa o Composer se precisar, clona/atualiza o projeto numa pasta **privada**
+(fora da área pública do site — `.env`, `vendor/` e `storage/` nunca ficam acessíveis via
+navegador), cria o `.env` perguntando só os dados essenciais, instala tudo, roda as
+migrations e (se você quiser) o seed de demonstração, e **publica automaticamente os
+arquivos públicos dentro de `domains/<seu-dominio>/public_html`** — já ajustando os
+caminhos do `index.php` e o link de storage para apontarem de volta para a pasta privada.
+No final, ainda mostra o comando exato do cron job que falta configurar.
 
 ```bash
 curl -o install-hostinger.sh -sSL https://raw.githubusercontent.com/tallentwave/imobiliariaCRM/claude/vibrant-pascal-w5ve97/deploy/install-hostinger.sh
 less install-hostinger.sh   # dê uma olhada no script antes de rodar, é sempre bom hábito
-bash install-hostinger.sh
+bash install-hostinger.sh seudominio.com.br
 ```
 
-Se preferir, pode passar uma pasta de destino diferente: `bash install-hostinger.sh /home/seu-usuario/nova-imoveis`.
-Ele pode ser executado mais de uma vez sem problema (é seguro rodar de novo para atualizar).
+Troque `seudominio.com.br` pelo domínio real do site (sem `http://` nem `www.`). Se você
+não passar o domínio como argumento, o script pergunta interativamente. Por padrão o
+código fica em `~/apps/<seudominio>` — se quiser outro lugar, passe como segundo argumento:
+`bash install-hostinger.sh seudominio.com.br /home/seu-usuario/pasta-privada`.
+
+Ele pode ser executado mais de uma vez sem problema (é seguro rodar de novo para atualizar
+— a cada execução ele também re-sincroniza a pasta `public_html` com a versão mais recente).
 
 Se o servidor não tiver Node.js (comum em hospedagem compartilhada), o script avisa e você
 deve rodar `npm install && npm run build` na sua máquina e enviar a pasta `public/build`
