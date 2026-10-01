@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\CommissionPlan;
 use App\Models\Organization;
 use App\Models\Team;
 use App\Models\Unit;
@@ -91,5 +92,44 @@ class RoleSeeder extends Seeder
             ]
         );
         $adminUser->assignRole('admin');
+
+        // Planos de comissão são configuração essencial (sem eles, nenhum negócio
+        // fechado gera comissão) — por isso ficam aqui, e não no seeder de dados de
+        // demonstração, que pode nunca rodar numa instalação real.
+        $salePlan = CommissionPlan::firstOrCreate(
+            ['organization_id' => $organization->id, 'name' => 'Plano padrão (venda)'],
+            [
+                'description' => 'Rateio padrão de venda: captador, corretor comprador e empresa.',
+                'purpose' => null,
+                'base_percent' => 5,
+                'is_default' => true,
+                'active' => true,
+            ]
+        );
+        if ($salePlan->rules()->count() === 0) {
+            $salePlan->rules()->createMany([
+                ['dimension' => 'CAP', 'percentage' => 40, 'order' => 1],
+                ['dimension' => 'BUY', 'percentage' => 40, 'order' => 2],
+                ['dimension' => 'COMPANY', 'percentage' => 20, 'order' => 3],
+            ]);
+        }
+
+        $rentalPlan = CommissionPlan::firstOrCreate(
+            ['organization_id' => $organization->id, 'name' => 'Plano aluguel'],
+            [
+                'description' => 'Comissão de aluguel: 100% de 1 aluguel, dividido entre captador, corretor e empresa.',
+                'purpose' => 'aluguel',
+                'base_percent' => 100,
+                'is_default' => false,
+                'active' => true,
+            ]
+        );
+        if ($rentalPlan->rules()->count() === 0) {
+            $rentalPlan->rules()->createMany([
+                ['dimension' => 'CAP', 'percentage' => 45, 'order' => 1],
+                ['dimension' => 'BUY', 'percentage' => 45, 'order' => 2],
+                ['dimension' => 'COMPANY', 'percentage' => 10, 'order' => 3],
+            ]);
+        }
     }
 }

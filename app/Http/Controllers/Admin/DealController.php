@@ -106,13 +106,19 @@ class DealController extends Controller
             return;
         }
 
-        $plan = CommissionPlan::where('organization_id', $deal->organization_id)->where('is_default', true)->first();
+        $purpose = $deal->property->purpose === 'aluguel' ? 'aluguel' : null;
+
+        $plan = CommissionPlan::where('organization_id', $deal->organization_id)
+            ->where('purpose', $purpose)
+            ->where('active', true)
+            ->first()
+            ?? CommissionPlan::where('organization_id', $deal->organization_id)->where('is_default', true)->first();
 
         if (! $plan) {
             return;
         }
 
-        $percent = 5;
+        $percent = (float) $plan->base_percent;
         $grossValue = (float) $deal->value;
         $total = round($grossValue * $percent / 100, 2);
 

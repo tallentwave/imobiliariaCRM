@@ -141,18 +141,8 @@ class DemoDataSeeder extends Seeder
             'granted_at' => now(),
         ]);
 
-        $commissionPlan = CommissionPlan::firstOrCreate(
-            ['organization_id' => $organization->id, 'name' => 'Plano padrão'],
-            ['description' => 'Rateio padrão: captador, corretor comprador e empresa.', 'is_default' => true, 'active' => true]
-        );
-
-        if ($commissionPlan->rules()->count() === 0) {
-            $commissionPlan->rules()->createMany([
-                ['dimension' => 'CAP', 'percentage' => 40, 'order' => 1],
-                ['dimension' => 'BUY', 'percentage' => 40, 'order' => 2],
-                ['dimension' => 'COMPANY', 'percentage' => 20, 'order' => 3],
-            ]);
-        }
+        // Os planos de comissão (venda e aluguel) agora são criados pelo RoleSeeder,
+        // que sempre roda — este seeder só cria dados fictícios de exemplo.
 
         $features = Feature::all();
 
@@ -332,7 +322,7 @@ class DemoDataSeeder extends Seeder
                         $commissionPercent = 5;
                         $totalCommission = round($grossValue * $commissionPercent / 100, 2);
 
-                        $commissionPlan = \App\Models\CommissionPlan::where('is_default', true)->first();
+                        $commissionPlan = CommissionPlan::where('is_default', true)->first();
 
                         $event = CommissionEvent::create([
                             'deal_id' => $deal->id,
